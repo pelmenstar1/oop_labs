@@ -34,12 +34,12 @@ public class StringCalculator {
 
             try {
                 int number = Integer.parseInt(numberStr);
+
                 if (number < 0) {
                     negativeNumbers.add(number);
-                    continue;
+                } else if (number <= 1000) {
+                    sum += number;
                 }
-
-                sum += number;
             } catch (Exception e) {
                 throwInvalidFormat();
             }

@@ -22,7 +22,10 @@ public class StringCalculatorTests {
                 Arguments.of("1\n2,3", 6),
                 Arguments.of("//;\n1;2", 3),
                 Arguments.of("//;\n1;2,3", 6),
-                Arguments.of("//,\n1,2", 3)
+                Arguments.of("//,\n1,2", 3),
+                Arguments.of("1001,2", 2),
+                Arguments.of("1000,2", 1002),
+                Arguments.of("1000,999,1001", 1999)
         );
     }
 
