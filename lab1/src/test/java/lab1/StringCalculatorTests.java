@@ -1,5 +1,6 @@
 package lab1;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -46,5 +47,19 @@ public class StringCalculatorTests {
     })
     public void addDoesNotPassValidationOnInvalidInput(String input) {
         assertThrows(IllegalArgumentException.class, () -> new StringCalculator().add(input));
+    }
+
+    @Test
+    public void addFailOnSingleNegativeNumber() {
+        String expectedMessage = "Negative numbers are not allowed. In the text, there was such number: -100";
+
+        assertThrows(IllegalArgumentException.class, () -> new StringCalculator().add("-100"), expectedMessage);
+    }
+
+    @Test
+    public void addFailOnNegativeNumbers() {
+        String expectedMessage = "Negative numbers are not allowed. In the text, there were such numbers: -100, -200";
+
+        assertThrows(IllegalArgumentException.class, () -> new StringCalculator().add("1,-100,-200"), expectedMessage);
     }
 }
