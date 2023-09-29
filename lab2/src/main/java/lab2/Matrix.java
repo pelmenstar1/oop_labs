@@ -37,6 +37,25 @@ public final class Matrix {
         return data.length == 0 ? 0 : data.length / columnCount;
     }
 
+    public double get(int row, int column) {
+        Preconditions.ensureValidIndexComponent(row,  getRowCount(), "row");
+        Preconditions.ensureValidIndexComponent(column, columnCount, "column");
+
+        return data[linearIndex(row, column)];
+    }
+
+    public double[] getRow(int index) {
+        Preconditions.ensureValidIndexComponent(index, getRowCount(), "index");
+
+        return MatrixOperations.getRow(data, index, columnCount);
+    }
+
+    public double[] getColumn(int index) {
+        Preconditions.ensureValidIndexComponent(index, columnCount, "index");
+
+        return MatrixOperations.getColumn(data, index, columnCount);
+    }
+
     public void set(int row, int column, double value) {
         Preconditions.ensureValidIndexComponent(row,  getRowCount(), "row");
         Preconditions.ensureValidIndexComponent(column, columnCount, "column");
