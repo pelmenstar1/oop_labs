@@ -101,6 +101,21 @@ public final class Matrix {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Matrix matrix = (Matrix) o;
+
+        return columnCount == matrix.columnCount && Arrays.equals(data, matrix.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(data) * 31 + columnCount;
+    }
+
     private int linearIndex(int row, int column) {
         return row * columnCount + column;
     }
