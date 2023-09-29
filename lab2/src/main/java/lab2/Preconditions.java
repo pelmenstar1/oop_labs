@@ -9,4 +9,10 @@ class Preconditions {
             throw new IllegalArgumentException(argName + " cannot be non-positive");
         }
     }
+
+    public static void ensureValidIndexComponent(int value, int max, String argName) {
+        if (value < 0 || value >= max) {
+            throw new IndexOutOfBoundsException(argName + " value is out of bounds");
+        }
+    }
 }
