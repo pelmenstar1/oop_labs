@@ -1,0 +1,33 @@
+plugins {
+    id 'application'
+}
+
+group = 'lab2'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+application {
+    mainClass="lab2.Main"
+}
+
+run {
+    standardInput=System.in
+}
+
+test {
+    useJUnitPlatform()
+}
