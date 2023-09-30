@@ -29,7 +29,10 @@ public class StringCalculatorTests {
             Arguments.of("//[***]\n1***2***3", 6),
             Arguments.of("//[\n]\n1\n2\n3", 6),
             Arguments.of("//[#$]\n1#$2#$3", 6),
-            Arguments.of("//[\n\n]\n1\n\n2", 3)
+            Arguments.of("//[\n\n]\n1\n\n2", 3),
+            Arguments.of("//[*][***][**]\n1*1***1,1**1\n1", 6),
+            Arguments.of("//[*][?]\n1*1?1,1\n1", 5),
+            Arguments.of("//[$]\n1$2\n3", 6)
         );
     }
 
@@ -57,6 +60,12 @@ public class StringCalculatorTests {
         "//[**\n",
         "//[\n*",
         "//[]\n",
+        "//[**][*\n",
+        "//[x][\n",
+        "//[x][]",
+        "//[x][]\n",
+        "//[**\n",
+        "//[**][*\n"
     })
     public void addDoesNotPassValidationOnInvalidInput(String input) {
         assertThrows(IllegalArgumentException.class, () -> new StringCalculator().add(input));

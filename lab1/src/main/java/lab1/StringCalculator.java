@@ -1,6 +1,7 @@
 package lab1;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class StringCalculator {
@@ -62,28 +63,31 @@ public class StringCalculator {
             }
         }
 
-        if (firstChar != '[') {
-            throwInvalidFormat();
+        int offset = startIndex;
+
+        while (true) {
+            if (text.charAt(offset) != '[') {
+                throwInvalidFormat();
+            }
+
+            int endBracketIndex = text.indexOf(']', offset + 1);
+            if (endBracketIndex < 0) {
+                // There must be ] after [
+                throwInvalidFormat();
+            }
+
+            int possibleNlIndex = endBracketIndex + 1;
+
+            if (possibleNlIndex == text.length()) {
+                throwInvalidFormat();
+            }
+
+            if (text.charAt(possibleNlIndex) == '\n') {
+                return possibleNlIndex;
+            }
+
+            offset = possibleNlIndex;
         }
-
-        int endBracketIndex = text.indexOf(']', 1);
-        if (endBracketIndex < 0) {
-            // There must be ] after [
-            throwInvalidFormat();
-        }
-
-        int nlIndex = endBracketIndex + 1;
-
-        if (nlIndex == text.length()) {
-            throwInvalidFormat();
-        }
-
-        if (text.charAt(nlIndex) == '\n') {
-            return nlIndex;
-        }
-
-        throwInvalidFormat();
-        throw new RuntimeException();
     }
 
     /**
@@ -97,27 +101,49 @@ public class StringCalculator {
             return "[,\n" + optSplitChar + "]";
         }
 
-        if (text.charAt(0) != '[') {
-            // The text must start with [
-            throwInvalidFormat();
+        var delimiters = new ArrayList<String>();
+
+        int offset = 0;
+
+        while (offset < text.length()) {
+            if (text.charAt(offset) != '[') {
+                // The text must start with [
+                throwInvalidFormat();
+            }
+
+            int endBracketIndex = text.indexOf(']', offset + 1);
+            if (endBracketIndex < 0) {
+                // There must be ] after [
+                throwInvalidFormat();
+            }
+
+            String delimiter = text.substring(offset + 1, endBracketIndex);
+
+            if (delimiter.isEmpty()) {
+                // The delimiter can't be empty.
+                throwInvalidFormat();
+            }
+
+            delimiters.add(delimiter);
+
+            offset = endBracketIndex + 1;
         }
 
-        int endBracketIndex = text.indexOf(']', 1);
-        if (endBracketIndex < 0) {
-            // There must be ] after [
-            throwInvalidFormat();
+        delimiters.sort(Collections.reverseOrder(String::compareTo));
+
+        var patternBuilder = new StringBuilder();
+
+        for (String delimiter : delimiters) {
+            // Add \Q to the begging and \E to the end to mark that the string between them should
+            // be matched literally.
+            patternBuilder.append("\\Q");
+            patternBuilder.append(delimiter);
+            patternBuilder.append("\\E|");
         }
 
-        String delimiter = text.substring(1, endBracketIndex);
+        patternBuilder.append(",|\n");
 
-        if (delimiter.isEmpty()) {
-            // The delimiter can't be empty.
-            throwInvalidFormat();
-        }
-
-        // Add \Q to the begging and \E to the end to mark that the string between them should
-        // be matched literally.
-        return "\\Q" + delimiter + "\\E|,|\n";
+        return patternBuilder.toString();
     }
 
     private static void throwOnNegativeNumbers(List<Integer> negativeNumbers) {
