@@ -11,9 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class StringCalculatorTests {
     public static Stream<Arguments> addTestArguments() {
         return Stream.of(
-                Arguments.of("", 0),
-                Arguments.of("1", 1),
-                Arguments.of("1,2", 3)
+            Arguments.of("", 0),
+            Arguments.of("1", 1),
+            Arguments.of("1,2", 3),
+            Arguments.of("1,2,3", 6),
+            Arguments.of("10,20,30", 60)
         );
     }
 

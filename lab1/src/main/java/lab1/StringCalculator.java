@@ -1,5 +1,7 @@
 package lab1;
 
+import java.util.Arrays;
+
 public class StringCalculator {
     public int add(String numbers) {
         if (numbers.isEmpty()) {
@@ -7,16 +9,7 @@ public class StringCalculator {
         }
 
         try {
-            int commaIndex = numbers.indexOf(',');
-            if (commaIndex < 0) {
-                // If comma is not in the 'numbers', then the whole 'numbers' is a one number.
-                return Integer.parseInt(numbers);
-            } else {
-                int a = Integer.parseInt(numbers.substring(0, commaIndex));
-                int b = Integer.parseInt(numbers.substring(commaIndex + 1));
-
-                return a + b;
-            }
+            return Arrays.stream(numbers.split(",")).map(Integer::parseInt).reduce(0, Integer::sum);
         } catch (Exception e) {
             throwInvalidFormat();
             throw new RuntimeException();
