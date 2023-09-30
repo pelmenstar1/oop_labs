@@ -9,6 +9,7 @@ public class Main {
 
         try {
             String numbers = new BufferedReader(new InputStreamReader(System.in)).readLine();
+            numbers = numbers.replace("\\n", "\n");
 
             int result = new StringCalculator().add(numbers);
 

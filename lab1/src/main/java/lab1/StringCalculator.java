@@ -1,19 +1,27 @@
 package lab1;
 
-import java.util.Arrays;
-
 public class StringCalculator {
     public int add(String numbers) {
         if (numbers.isEmpty()) {
             return 0;
         }
 
-        try {
-            return Arrays.stream(numbers.split(",")).map(Integer::parseInt).reduce(0, Integer::sum);
-        } catch (Exception e) {
-            throwInvalidFormat();
-            throw new RuntimeException();
+        int sum = 0;
+
+        // Set the limit to -1 to include empty strings.
+        for (String numberStr : numbers.split("[,\n]", -1)) {
+            if (numberStr.isEmpty()) {
+                throwInvalidFormat();
+            }
+
+            try {
+                sum += Integer.parseInt(numberStr);
+            } catch (Exception e) {
+                throwInvalidFormat();
+            }
         }
+
+        return sum;
     }
 
     private static void throwInvalidFormat() {
