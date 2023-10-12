@@ -110,6 +110,16 @@ package lab2;
         return data;
     }
 
+    public static double[] createIdentity(int size) {
+        double[] data = new double[size * size];
+
+        for (int i = 0; i < size; i++) {
+            data[getLinearIndex(i, i, size)] = 1.0;
+        }
+
+        return data;
+    }
+
     private static int getLinearIndex(int row, int column, int columnCount) {
         return row * columnCount + column;
     }

@@ -91,4 +91,10 @@ public class MutableMatrix extends ImmutableMatrix {
             new MatrixDimension(vector.length)
         );
     }
+
+    public static MutableMatrix createIdentity(int size) {
+        Preconditions.ensureValidDimension(size, "size");
+
+        return new MutableMatrix(MatrixOperations.createIdentity(size), new MatrixDimension(size));
+    }
 }

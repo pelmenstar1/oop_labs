@@ -234,4 +234,31 @@ public class MatrixOperationsTests {
 
         assertArrayEquals(expectedMatrix, actualMatrix);
     }
+
+    public static Stream<Arguments> createIdentityTestArguments() {
+        double[] matrix1 = new double[] { 1.0 };
+        double[] matrix2 = new double[] {
+            1.0, 0.0,
+            0.0, 1.0
+        };
+        double[] matrix3 = new double[] {
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0
+        };
+
+        return Stream.of(
+            Arguments.of(1, matrix1),
+            Arguments.of(2, matrix2),
+            Arguments.of(3, matrix3)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("createIdentityTestArguments")
+    public void createIdentityTest(int size, double[] expectedMatrix) {
+        double[] actualMatrix = MatrixOperations.createIdentity(size);
+
+        assertArrayEquals(expectedMatrix, actualMatrix);
+    }
 }

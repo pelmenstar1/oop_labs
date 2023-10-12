@@ -108,6 +108,12 @@ public class ImmutableMatrix {
         );
     }
 
+    public static ImmutableMatrix createIdentity(int size) {
+        Preconditions.ensureValidDimension(size, "size");
+
+        return new ImmutableMatrix(MatrixOperations.createIdentity(size), new MatrixDimension(size));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof ImmutableMatrix matrix) {
