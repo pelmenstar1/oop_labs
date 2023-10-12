@@ -2,81 +2,76 @@ package lab2;
 
 import java.util.Arrays;
 
-public final class Matrix {
+public class MutableMatrix {
     private final double[] data;
-    private final int columnCount;
+    private final MatrixDimension dimen;
 
-    public Matrix() {
+    public MutableMatrix() {
         data = new double[0];
-        columnCount = 0;
+        dimen = new MatrixDimension(0, 0);
     }
 
-    public Matrix(int columnCount, int rowCount) {
+    public MutableMatrix(int columnCount, int rowCount) {
         Preconditions.ensureValidDimension(columnCount, "columnCount");
         Preconditions.ensureValidDimension(rowCount, "rowCount");
 
         data = new double[columnCount * rowCount];
-        this.columnCount = columnCount;
+        dimen = new MatrixDimension(columnCount, rowCount);
     }
 
-    public Matrix(Matrix other) {
+    public MutableMatrix(MutableMatrix other) {
         data = Arrays.copyOf(other.data, other.data.length);
-        columnCount = other.columnCount;
+        dimen = new MatrixDimension(other.dimen);
     }
 
-    private Matrix(double[] data, int columnCount) {
-        this.data = data;
-        this.columnCount = columnCount;
-    }
-
-    public int getColumnCount() {
-        return columnCount;
-    }
-
-    public int getRowCount() {
-        return data.length == 0 ? 0 : data.length / columnCount;
+    public MatrixDimension getDimension() {
+        return dimen;
     }
 
     public double get(int row, int column) {
-        Preconditions.ensureValidIndexComponent(row,  getRowCount(), "row");
-        Preconditions.ensureValidIndexComponent(column, columnCount, "column");
+        Preconditions.ensureValidIndexComponent(row, dimen.getRowCount(), "row");
+        Preconditions.ensureValidIndexComponent(column, dimen.getColumnCount(), "column");
 
         return data[linearIndex(row, column)];
     }
 
     public double[] getRow(int index) {
-        Preconditions.ensureValidIndexComponent(index, getRowCount(), "index");
+        Preconditions.ensureValidIndexComponent(index, dimen.getRowCount(), "index");
 
-        return MatrixOperations.getRow(data, index, columnCount);
+        return MatrixOperations.getRow(data, index, dimen);
     }
 
     public double[] getColumn(int index) {
-        Preconditions.ensureValidIndexComponent(index, columnCount, "index");
+        Preconditions.ensureValidIndexComponent(index, dimen.getColumnCount(), "index");
 
-        return MatrixOperations.getColumn(data, index, columnCount);
+        return MatrixOperations.getColumn(data, index, dimen);
     }
 
     public void set(int row, int column, double value) {
-        Preconditions.ensureValidIndexComponent(row,  getRowCount(), "row");
-        Preconditions.ensureValidIndexComponent(column, columnCount, "column");
+        Preconditions.ensureValidIndexComponent(row, dimen.getRowCount(), "row");
+        Preconditions.ensureValidIndexComponent(column, dimen.getColumnCount(), "column");
 
         data[linearIndex(row, column)] = value;
     }
 
     public void setRow(int index, double[] row) {
-        Preconditions.ensureValidIndexComponent(index, getRowCount(), "index");
+        Preconditions.ensureValidIndexComponent(index, dimen.getRowCount(), "index");
 
-        if (row.length != columnCount) {
+        if (row.length != dimen.getColumnCount()) {
             throw new IllegalArgumentException("row's length should equal to the column count of the matrix");
         }
+
+        int columnCount = dimen.getColumnCount();
 
         System.arraycopy(row, 0, data, index * columnCount, columnCount);
     }
 
     public void setColumn(int index, double[] column) {
+        int columnCount = dimen.getColumnCount();
+
         Preconditions.ensureValidIndexComponent(index, columnCount, "index");
 
-        if (column.length != getRowCount()) {
+        if (column.length != dimen.getRowCount()) {
             throw new IllegalArgumentException("column's length should equal to the row count of the matrix");
         }
 
@@ -86,7 +81,9 @@ public final class Matrix {
     }
 
     public void set(double[][] rows) {
-        if (rows.length != getRowCount()) {
+        int columnCount = dimen.getColumnCount();
+
+        if (rows.length != dimen.getRowCount()) {
             throw new IllegalArgumentException("rows length should equal to the row count of the matrix");
         }
 
@@ -106,17 +103,17 @@ public final class Matrix {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Matrix matrix = (Matrix) o;
+        MutableMatrix matrix = (MutableMatrix) o;
 
-        return columnCount == matrix.columnCount && Arrays.equals(data, matrix.data);
+        return dimen.equals(matrix.dimen) && Arrays.equals(data, matrix.data);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(data) * 31 + columnCount;
+        return Arrays.hashCode(data) * 31 + dimen.hashCode();
     }
 
     private int linearIndex(int row, int column) {
-        return row * columnCount + column;
+        return row * dimen.getColumnCount() + column;
     }
 }
