@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Random;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -219,5 +220,19 @@ public class ImmutableMatrixTests {
         int hash3 = matrix.hashCode();
 
         assertEquals(hash1, hash3);
+    }
+
+    @Test
+    public void createRandomRowMatrixTest() {
+        var matrix = ImmutableMatrix.createRandomRowMatrix(3, new Random());
+
+        assertEquals(new MatrixDimension(3, 1), matrix.getDimension());
+    }
+
+    @Test
+    public void createRandomColumnMatrixTest() {
+        var matrix = ImmutableMatrix.createRandomColumnMatrix(3, new Random());
+
+        assertEquals(new MatrixDimension(1, 3), matrix.getDimension());
     }
 }

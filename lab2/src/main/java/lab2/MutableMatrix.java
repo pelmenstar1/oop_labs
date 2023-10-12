@@ -1,5 +1,7 @@
 package lab2;
 
+import java.util.Random;
+
 public class MutableMatrix extends ImmutableMatrix {
     public MutableMatrix() {
         super();
@@ -96,5 +98,19 @@ public class MutableMatrix extends ImmutableMatrix {
         Preconditions.ensureValidDimension(size, "size");
 
         return new MutableMatrix(MatrixOperations.createIdentity(size), new MatrixDimension(size));
+    }
+
+    public static MutableMatrix createRandomRowMatrix(int length, Random random) {
+        return createRandomMatrixInternal(length, random, new MatrixDimension(length, 1));
+    }
+
+    public static MutableMatrix createRandomColumnMatrix(int length, Random random) {
+        return createRandomMatrixInternal(length, random, new MatrixDimension(1, length));
+    }
+
+    private static MutableMatrix createRandomMatrixInternal(int length, Random random, MatrixDimension dimen) {
+        Preconditions.ensureValidLength(length);
+
+        return new MutableMatrix(MatrixOperations.createRandomMatrix(length, random), dimen);
     }
 }

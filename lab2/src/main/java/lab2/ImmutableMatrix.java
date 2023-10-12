@@ -1,6 +1,7 @@
 package lab2;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public class ImmutableMatrix {
     protected final double[] data;
@@ -112,6 +113,20 @@ public class ImmutableMatrix {
         Preconditions.ensureValidDimension(size, "size");
 
         return new ImmutableMatrix(MatrixOperations.createIdentity(size), new MatrixDimension(size));
+    }
+
+    public static ImmutableMatrix createRandomRowMatrix(int length, Random random) {
+       return createRandomMatrixInternal(length, random, new MatrixDimension(length, 1));
+    }
+
+    public static ImmutableMatrix createRandomColumnMatrix(int length, Random random) {
+        return createRandomMatrixInternal(length, random, new MatrixDimension(1, length));
+    }
+
+    private static ImmutableMatrix createRandomMatrixInternal(int length, Random random, MatrixDimension dimen) {
+        Preconditions.ensureValidLength(length);
+
+        return new ImmutableMatrix(MatrixOperations.createRandomMatrix(length, random), dimen);
     }
 
     @Override

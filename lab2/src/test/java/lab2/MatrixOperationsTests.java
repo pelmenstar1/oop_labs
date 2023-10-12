@@ -1,9 +1,11 @@
 package lab2;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Random;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -260,5 +262,22 @@ public class MatrixOperationsTests {
         double[] actualMatrix = MatrixOperations.createIdentity(size);
 
         assertArrayEquals(expectedMatrix, actualMatrix);
+    }
+
+    @Test
+    public void createRandomMatrixTest() {
+        Random random = new Random() {
+            private int index = 0;
+
+            @Override
+            public double nextDouble() {
+                return index++;
+            }
+        };
+
+        double[] actual = MatrixOperations.createRandomMatrix(3, random);
+        double[] expected = new double[] { 0, 1, 2 };
+
+        assertArrayEquals(expected, actual);
     }
 }

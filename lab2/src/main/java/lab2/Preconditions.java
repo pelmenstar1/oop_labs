@@ -21,4 +21,10 @@ class Preconditions {
             throw new IllegalArgumentException("Expected same dimensions");
         }
     }
+
+    public static void ensureValidLength(int length) {
+        if (length < 0) {
+            throw new IllegalArgumentException("length cannot be negative");
+        }
+    }
 }

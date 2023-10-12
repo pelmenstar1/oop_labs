@@ -1,5 +1,7 @@
 package lab2;
 
+import java.util.Random;
+
 /*package-private*/ class MatrixOperations {
     public static double[] getRow(double[] data, int index, MatrixDimension dimen) {
         int columnCount = dimen.getColumnCount();
@@ -115,6 +117,16 @@ package lab2;
 
         for (int i = 0; i < size; i++) {
             data[getLinearIndex(i, i, size)] = 1.0;
+        }
+
+        return data;
+    }
+
+    public static double[] createRandomMatrix(int length, Random random) {
+        double[] data = new double[length];
+
+        for (int i = 0; i < data.length; i++) {
+            data[i] = random.nextDouble();
         }
 
         return data;
