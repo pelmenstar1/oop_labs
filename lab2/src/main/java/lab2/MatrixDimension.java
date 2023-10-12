@@ -5,6 +5,13 @@ public final class MatrixDimension {
     private final int rowCount;
 
     public MatrixDimension(int columnCount, int rowCount) {
+        if (columnCount == 0 && rowCount == 0) {
+            this.columnCount = 0;
+            this.rowCount = 0;
+
+            return;
+        }
+
         Preconditions.ensureValidDimension(columnCount, "columnCount");
         Preconditions.ensureValidDimension(rowCount, "rowCount");
 
