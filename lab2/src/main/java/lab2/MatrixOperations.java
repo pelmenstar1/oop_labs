@@ -84,6 +84,22 @@ package lab2;
         return result;
     }
 
+    public static double[] transpose(double[] matrix, MatrixDimension dimen) {
+        // Element count doesn't change on transposing.
+        double[] result = new double[matrix.length];
+
+        int rowCount = dimen.getRowCount();
+        int columnCount = dimen.getColumnCount();
+
+        for (int i = 0; i < rowCount; i++) {
+            for (int j = 0; j < columnCount; j++) {
+                result[getLinearIndex(j, i, rowCount)] = matrix[getLinearIndex(i, j, columnCount)];
+            }
+        }
+
+        return result;
+    }
+
     private static int getLinearIndex(int row, int column, int columnCount) {
         return row * columnCount + column;
     }

@@ -79,4 +79,9 @@ public class MutableMatrix extends ImmutableMatrix {
             getDimensionForMultiplicationResult(other)
         );
     }
+
+    @Override
+    public MutableMatrix transposed() {
+        return new MutableMatrix(MatrixOperations.transpose(data, dimen), dimen.interchanged());
+    }
 }

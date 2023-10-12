@@ -134,6 +134,34 @@ public class ImmutableMatrixTests {
         assertThrows(IllegalArgumentException.class, () -> origin.multiplyBy(other));
     }
 
+    @Test
+    public void transposedTest() {
+        var matrix = new ImmutableMatrix(new double[][]{new double[]{1, 2, 3}, new double[]{4, 5, 6}});
+
+        var transposedMatrix = matrix.transposed();
+        assertEquals(3, transposedMatrix.getDimension().getRowCount());
+        assertEquals(2, transposedMatrix.getDimension().getColumnCount());
+
+        // 1 4
+        // 2 5
+        // 3 6
+        assertEquals(1, transposedMatrix.get(0, 0));
+        assertEquals(4, transposedMatrix.get(0, 1));
+        assertEquals(2, transposedMatrix.get(1, 0));
+        assertEquals(5, transposedMatrix.get(1, 1));
+        assertEquals(3, transposedMatrix.get(2, 0));
+        assertEquals(6, transposedMatrix.get(2, 1));
+    }
+
+    @Test
+    public void transposedEmptyMatrixTest() {
+        var matrix = new ImmutableMatrix();
+        var transposedMatrix = matrix.transposed();
+
+        // Transposed empty matrix is empty matrix.
+        assertEquals(transposedMatrix, matrix);
+    }
+
     @SuppressWarnings({"EqualsWithItself", "SimplifiableAssertion"}) // That's what we are testing
     @Test
     public void equalsTest() {

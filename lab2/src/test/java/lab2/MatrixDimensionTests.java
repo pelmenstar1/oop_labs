@@ -41,6 +41,21 @@ public class MatrixDimensionTests {
         assertThrows(IllegalArgumentException.class, () -> new MatrixDimension(columnCount, rowCount));
     }
 
+    public static Stream<Arguments> interchangedTestArguments() {
+        return Stream.of(
+            Arguments.of(new MatrixDimension(0, 0), new MatrixDimension(0, 0)),
+            Arguments.of(new MatrixDimension(1, 2), new MatrixDimension(2, 1))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("interchangedTestArguments")
+    public void interchangedTest(MatrixDimension dimen, MatrixDimension expected) {
+        MatrixDimension actual = dimen.interchanged();
+
+        assertEquals(expected, actual);
+    }
+
     // that's what we're testing
     @SuppressWarnings({"SimplifiableAssertion", "EqualsWithItself", "ConstantValue"})
     @Test

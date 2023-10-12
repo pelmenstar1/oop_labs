@@ -32,6 +32,10 @@ public final class MatrixDimension {
         return rowCount;
     }
 
+    public MatrixDimension interchanged() {
+        return new MatrixDimension(rowCount, columnCount);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

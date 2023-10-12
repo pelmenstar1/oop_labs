@@ -93,6 +93,10 @@ public class ImmutableMatrix {
         }
     }
 
+    public ImmutableMatrix transposed() {
+        return new ImmutableMatrix(MatrixOperations.transpose(data, dimen), dimen.interchanged());
+    }
+
     protected int linearIndex(int row, int column) {
         return row * dimen.getColumnCount() + column;
     }
