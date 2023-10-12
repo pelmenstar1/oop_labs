@@ -36,6 +36,11 @@ public class ImmutableMatrix {
         dimen = new MatrixDimension(other.dimen);
     }
 
+    protected ImmutableMatrix(double[] data, MatrixDimension dimen) {
+        this.data = data;
+        this.dimen = dimen;
+    }
+
     public MatrixDimension getDimension() {
         return dimen;
     }
@@ -57,6 +62,16 @@ public class ImmutableMatrix {
         Preconditions.ensureValidIndexComponent(index, dimen.getColumnCount(), "index");
 
         return MatrixOperations.getColumn(data, index, dimen);
+    }
+
+    public ImmutableMatrix plus(ImmutableMatrix other) {
+        Preconditions.ensureSameDimensions(dimen, other.dimen);
+
+        return new ImmutableMatrix(MatrixOperations.add(data, other.data), dimen);
+    }
+
+    public ImmutableMatrix multiplyBy(double scalar) {
+        return new ImmutableMatrix(MatrixOperations.multiplyByScalar(data, scalar), dimen);
     }
 
     protected int linearIndex(int row, int column) {

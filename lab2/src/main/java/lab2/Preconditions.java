@@ -15,4 +15,10 @@ class Preconditions {
             throw new IndexOutOfBoundsException(argName + " value is out of bounds");
         }
     }
+
+    public static void ensureSameDimensions(MatrixDimension a, MatrixDimension b) {
+        if (!a.equals(b)) {
+            throw new IllegalArgumentException("Expected same dimensions");
+        }
+    }
 }

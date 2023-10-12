@@ -1,6 +1,11 @@
 package lab2;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -94,6 +99,23 @@ public class ImmutableMatrixTests {
 
         assertThrows(IndexOutOfBoundsException.class, () -> matrix.getColumn(-1));
         assertThrows(IndexOutOfBoundsException.class, () -> matrix.getColumn(2));
+    }
+
+    public static Stream<Arguments> addThrowsOnInvalidDimensionsTestArguments() {
+        return Stream.of(
+            Arguments.of(2, 2, 1, 1),
+            Arguments.of(2, 2, 1, 2),
+            Arguments.of(2, 2, 2, 1)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("addThrowsOnInvalidDimensionsTestArguments")
+    public void addThrowsOnInvalidDimensionsTest(int thisColumnCount, int thisRowCount, int otherColumnCount, int otherRowCount) {
+        var origin = new ImmutableMatrix(thisColumnCount, thisRowCount);
+        var other = new ImmutableMatrix(otherColumnCount, otherRowCount);
+
+        assertThrows(IllegalArgumentException.class, () -> origin.plus(other));
     }
 
     @SuppressWarnings({"EqualsWithItself", "SimplifiableAssertion"}) // That's what we are testing

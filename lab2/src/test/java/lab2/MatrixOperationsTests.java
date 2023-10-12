@@ -77,4 +77,58 @@ public class MatrixOperationsTests {
         assertArrayEquals(expectedColumn, actualColumn);
     }
 
+    public static Stream<Arguments> addTestArguments() {
+        double[] matrix1 = new double[]{
+            0, 1, 2,
+            3, 4, 5,
+            6, 8, 9
+        };
+
+
+        double[] matrix2 = new double[]{
+            2, 3, 4,
+            5, 6, 7,
+            8, 9, 10
+        };
+
+        double[] matrix3 = new double[]{
+            2, 4, 6,
+            8, 10, 12,
+            14, 17, 19
+        };
+
+        return Stream.of(Arguments.of(matrix1, matrix2, matrix3));
+    }
+
+    @ParameterizedTest
+    @MethodSource("addTestArguments")
+    public void addTest(double[] matrix1, double[] matrix2, double[] expectedResult) {
+        double[] actualResult = MatrixOperations.add(matrix1, matrix2);
+
+        assertArrayEquals(expectedResult, actualResult);
+    }
+
+    public static Stream<Arguments> multiplyScalarTestArguments() {
+        double[] matrix1 = new double[]{
+            0, 1, 2,
+            3, 4, 5,
+            6, 8, 9
+        };
+
+        double[] matrix2 = new double[]{
+            0, 2, 4,
+            6, 8, 10,
+            12, 16, 18
+        };
+
+        return Stream.of(Arguments.of(matrix1, 2, matrix2));
+    }
+
+    @ParameterizedTest
+    @MethodSource("multiplyScalarTestArguments")
+    public void multiplyScalarTest(double[] matrix1, double scalar, double[] expectedResult) {
+        double[] actualResult = MatrixOperations.multiplyByScalar(matrix1, scalar);
+
+        assertArrayEquals(expectedResult, actualResult);
+    }
 }

@@ -13,6 +13,10 @@ public class MutableMatrix extends ImmutableMatrix {
         super(other);
     }
 
+    protected MutableMatrix(double[] data, MatrixDimension dimen) {
+        super(data, dimen);
+    }
+
     public void set(int row, int column, double value) {
         Preconditions.ensureValidIndexComponent(row, dimen.getRowCount(), "row");
         Preconditions.ensureValidIndexComponent(column, dimen.getColumnCount(), "column");
@@ -52,5 +56,17 @@ public class MutableMatrix extends ImmutableMatrix {
         }
 
         MatrixOperations.setRows(data, rows, dimen);
+    }
+
+    @Override
+    public MutableMatrix plus(ImmutableMatrix other) {
+        Preconditions.ensureSameDimensions(dimen, other.dimen);
+
+        return new MutableMatrix(MatrixOperations.add(data, other.data), dimen);
+    }
+
+    @Override
+    public MutableMatrix multiplyBy(double scalar) {
+        return new MutableMatrix(MatrixOperations.multiplyByScalar(data, scalar), dimen);
     }
 }

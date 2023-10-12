@@ -3,6 +3,11 @@ package lab2;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 public class MatrixTests {
     @Test
@@ -89,5 +94,22 @@ public class MatrixTests {
         assertThrows(IllegalArgumentException.class, () -> matrix.set(new double[0][]));
         assertThrows(IllegalArgumentException.class, () -> matrix.set(new double[][]{new double[]{1}, new double[]{1, 2}}));
         assertThrows(IllegalArgumentException.class, () -> matrix.set(new double[][]{new double[]{1, 2}, new double[]{1}}));
+    }
+
+    public static Stream<Arguments> addThrowsOnInvalidDimensionsTestArguments() {
+        return Stream.of(
+            Arguments.of(2, 2, 1, 1),
+            Arguments.of(2, 2, 1, 2),
+            Arguments.of(2, 2, 2, 1)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("addThrowsOnInvalidDimensionsTestArguments")
+    public void addThrowsOnInvalidDimensionsTest(int thisColumnCount, int thisRowCount, int otherColumnCount, int otherRowCount) {
+        var origin = new MutableMatrix(thisColumnCount, thisRowCount);
+        var other = new ImmutableMatrix(otherColumnCount, otherRowCount);
+
+        assertThrows(IllegalArgumentException.class, () -> origin.plus(other));
     }
 }
