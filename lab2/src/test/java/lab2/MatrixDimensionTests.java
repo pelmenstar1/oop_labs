@@ -6,11 +6,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.stream.Stream;
 
 public class MatrixDimensionTests {
-    public static Stream<Arguments> sizeConstructorTestArguments() {
+    @ParameterizedTest
+    @ValueSource(ints = { 0, 1, 2 })
+    public void sizeConstructorTest(int size) {
+        var dimen = new MatrixDimension(size);
+
+        assertEquals(size, dimen.getRowCount());
+        assertEquals(size, dimen.getColumnCount());
+    }
+
+    public static Stream<Arguments> twoComponentConstructorTestArguments() {
         return Stream.of(
             Arguments.of(1, 2),
             Arguments.of(2, 1),
@@ -19,8 +29,8 @@ public class MatrixDimensionTests {
     }
 
     @ParameterizedTest
-    @MethodSource("sizeConstructorTestArguments")
-    public void sizeConstructorTest(int columnCount, int rowCount) {
+    @MethodSource("twoComponentConstructorTestArguments")
+    public void twoComponentConstructorTest(int columnCount, int rowCount) {
         var dimen = new MatrixDimension(columnCount, rowCount);
 
         assertEquals(columnCount, dimen.getColumnCount());

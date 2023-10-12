@@ -100,6 +100,16 @@ package lab2;
         return result;
     }
 
+    public static double[] createDiagonalMatrix(double[] vector) {
+        double[] data = new double[vector.length * vector.length];
+
+        for (int i = 0; i < vector.length; i++) {
+            data[getLinearIndex(i, i, vector.length)] = vector[i];
+        }
+
+        return data;
+    }
+
     private static int getLinearIndex(int row, int column, int columnCount) {
         return row * columnCount + column;
     }

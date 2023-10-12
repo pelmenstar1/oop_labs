@@ -162,6 +162,24 @@ public class ImmutableMatrixTests {
         assertEquals(transposedMatrix, matrix);
     }
 
+    @Test
+    public void createDiagonalTest() {
+        var matrix = ImmutableMatrix.createDiagonal(new double[]{1, 2, 3});
+
+        // 1 0 0
+        // 0 2 0
+        // 0 0 3
+        assertEquals(1, matrix.get(0, 0));
+        assertEquals(0, matrix.get(0, 1));
+        assertEquals(0, matrix.get(0, 2));
+        assertEquals(0, matrix.get(1, 0));
+        assertEquals(2, matrix.get(1, 1));
+        assertEquals(0, matrix.get(1, 2));
+        assertEquals(0, matrix.get(2, 0));
+        assertEquals(0, matrix.get(2, 1));
+        assertEquals(3, matrix.get(2, 2));
+    }
+
     @SuppressWarnings({"EqualsWithItself", "SimplifiableAssertion"}) // That's what we are testing
     @Test
     public void equalsTest() {

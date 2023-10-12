@@ -19,7 +19,7 @@ public class ImmutableMatrix {
     public ImmutableMatrix(double[][] rows) {
         if (rows.length == 0) {
             data = new double[0];
-            dimen = new MatrixDimension(0, 0);
+            dimen = new MatrixDimension(0);
         } else {
             int columnCount = rows[0].length;
             int rowCount = rows.length;
@@ -99,6 +99,13 @@ public class ImmutableMatrix {
 
     protected int linearIndex(int row, int column) {
         return row * dimen.getColumnCount() + column;
+    }
+
+    public static ImmutableMatrix createDiagonal(double[] vector) {
+        return new ImmutableMatrix(
+            MatrixOperations.createDiagonalMatrix(vector),
+            new MatrixDimension(vector.length)
+        );
     }
 
     @Override

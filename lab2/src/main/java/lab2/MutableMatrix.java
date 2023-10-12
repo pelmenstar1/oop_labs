@@ -84,4 +84,11 @@ public class MutableMatrix extends ImmutableMatrix {
     public MutableMatrix transposed() {
         return new MutableMatrix(MatrixOperations.transpose(data, dimen), dimen.interchanged());
     }
+
+    public static MutableMatrix createDiagonal(double[] vector) {
+        return new MutableMatrix(
+            MatrixOperations.createDiagonalMatrix(vector),
+            new MatrixDimension(vector.length)
+        );
+    }
 }

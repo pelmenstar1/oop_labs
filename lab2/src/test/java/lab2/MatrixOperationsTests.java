@@ -202,4 +202,36 @@ public class MatrixOperationsTests {
 
         assertArrayEquals(expectedResult, actualResult);
     }
+
+    public static Stream<Arguments> createDiagonalMatrixTestArguments() {
+        double[] vec1 = new double[] { 1 };
+        double[] vec2 = new double[] { 1, 2 };
+        double[] vec3 = new double[] { 1, 2, 3 };
+
+        double[] result1 = new double[] { 1 };
+        double[] result2 = new double[] {
+            1, 0,
+            0, 2
+        };
+
+        double[] result3 = new double[] {
+            1, 0, 0,
+            0, 2, 0,
+            0, 0, 3,
+        };
+
+        return Stream.of(
+            Arguments.of(vec1, result1),
+            Arguments.of(vec2, result2),
+            Arguments.of(vec3, result3)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("createDiagonalMatrixTestArguments")
+    public void createDiagonalMatrixTest(double[] vector, double[] expectedMatrix) {
+        double[] actualMatrix = MatrixOperations.createDiagonalMatrix(vector);
+
+        assertArrayEquals(expectedMatrix, actualMatrix);
+    }
 }

@@ -4,6 +4,10 @@ public final class MatrixDimension {
     private final int columnCount;
     private final int rowCount;
 
+    public MatrixDimension(int size) {
+        this(size, size);
+    }
+
     public MatrixDimension(int columnCount, int rowCount) {
         if (columnCount == 0 && rowCount == 0) {
             this.columnCount = 0;
