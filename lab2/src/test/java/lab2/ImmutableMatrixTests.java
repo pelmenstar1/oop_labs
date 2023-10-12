@@ -118,6 +118,22 @@ public class ImmutableMatrixTests {
         assertThrows(IllegalArgumentException.class, () -> origin.plus(other));
     }
 
+    public static Stream<Arguments> multiplyByMatrixThrowsOnIncompatibleOtherMatrixTestArguments() {
+        return Stream.of(
+            Arguments.of(2, 1, 2, 3),
+            Arguments.of(3, 1, 2, 2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("multiplyByMatrixThrowsOnIncompatibleOtherMatrixTestArguments")
+    public void multiplyByMatrixThrowsOnIncompatibleOtherMatrixTest(int thisColumnCount, int thisRowCount, int otherColumnCount, int otherRowCount) {
+        var origin = new ImmutableMatrix(thisColumnCount, thisRowCount);
+        var other = new ImmutableMatrix(otherColumnCount, otherRowCount);
+
+        assertThrows(IllegalArgumentException.class, () -> origin.multiplyBy(other));
+    }
+
     @SuppressWarnings({"EqualsWithItself", "SimplifiableAssertion"}) // That's what we are testing
     @Test
     public void equalsTest() {

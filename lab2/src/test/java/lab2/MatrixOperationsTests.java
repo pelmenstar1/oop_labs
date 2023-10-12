@@ -131,4 +131,75 @@ public class MatrixOperationsTests {
 
         assertArrayEquals(expectedResult, actualResult);
     }
+
+    public static Stream<Arguments> multiplyMatricesTestArguments() {
+        var dimen2x2 = new MatrixDimension(2, 2);
+        var dimen3x3 = new MatrixDimension(3, 3);
+        var dimen3x2 = new MatrixDimension(2, 3);
+        var dimen2x3 = new MatrixDimension(3, 2);
+
+        double[] matrix1 = new double[]{
+            0, 1, 2,
+            3, 4, 5,
+            6, 8, 9
+        };
+
+        double[] matrix2 = new double[]{
+            0, 2, 4,
+            6, 8, 10,
+            12, 16, 18
+        };
+
+        double[] matrix_1_2_result = new double[] {
+            30, 40, 46,
+            84, 118, 142,
+            156, 220, 266
+        };
+
+        double[] matrix3 = new double[] {
+            1, 2,
+            3, 4
+        };
+
+        double[] matrix4 = new double[] {
+            10, 20,
+            30, 40
+        };
+
+        double[] matrix_3_4_result = new double[] {
+            70, 100,
+            150, 220
+        };
+
+        double[] matrix5 = new double[] {
+            1, 2,
+            3, 4,
+            5, 6
+        };
+
+        double[] matrix6 = new double[] {
+            1, 2, 3,
+            4, 5, 6
+        };
+
+        double[] matrix_5_6_result = new double[] {
+            9, 12, 15,
+            19, 26, 33,
+            29, 40, 51
+        };
+
+        return Stream.of(
+            Arguments.of(matrix1, matrix2, dimen3x3, dimen3x3, matrix_1_2_result),
+            Arguments.of(matrix3, matrix4, dimen2x2, dimen2x2, matrix_3_4_result),
+            Arguments.of(matrix5, matrix6, dimen3x2, dimen2x3, matrix_5_6_result)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("multiplyMatricesTestArguments")
+    public void multiplyMatricesTest(double[] matrix1, double[] matrix2, MatrixDimension dimen1, MatrixDimension dimen2, double[] expectedResult) {
+        double[] actualResult = MatrixOperations.multiplyMatrices(matrix1, matrix2, dimen1, dimen2);
+
+        assertArrayEquals(expectedResult, actualResult);
+    }
 }

@@ -74,6 +74,25 @@ public class ImmutableMatrix {
         return new ImmutableMatrix(MatrixOperations.multiplyByScalar(data, scalar), dimen);
     }
 
+    public ImmutableMatrix multiplyBy(ImmutableMatrix other) {
+        ensureCompatibleForMultiplication(other);
+
+        return new ImmutableMatrix(
+            MatrixOperations.multiplyMatrices(data, other.data, dimen, other.dimen),
+            getDimensionForMultiplicationResult(other)
+        );
+    }
+
+    protected MatrixDimension getDimensionForMultiplicationResult(ImmutableMatrix other) {
+        return new MatrixDimension(other.getDimension().getColumnCount(), dimen.getRowCount());
+    }
+
+    protected void ensureCompatibleForMultiplication(ImmutableMatrix other) {
+        if (dimen.getColumnCount() != other.dimen.getRowCount()) {
+            throw new IllegalArgumentException("Cannot multiply this matrix by other: column count of this matrix is incompatible with other's row count");
+        }
+    }
+
     protected int linearIndex(int row, int column) {
         return row * dimen.getColumnCount() + column;
     }

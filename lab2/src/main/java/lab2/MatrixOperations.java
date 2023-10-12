@@ -57,6 +57,33 @@ package lab2;
         return output;
     }
 
+    public static double[] multiplyMatrices(
+        double[] matrix1,
+        double[] matrix2,
+        MatrixDimension matrix1Dimen,
+        MatrixDimension matrix2Dimen
+    ) {
+        int columnCount1 = matrix1Dimen.getColumnCount();
+        int rowCount1 = matrix1Dimen.getRowCount();
+
+        int columnCount2 = matrix2Dimen.getColumnCount();
+        double[] result = new double[rowCount1 * columnCount2];
+
+        for (int i = 0; i < rowCount1; i++) {
+            for (int j = 0; j < columnCount2; j++) {
+                double sum = 0;
+
+                for (int k = 0; k < columnCount1; k++) {
+                    sum += matrix1[getLinearIndex(i, k, columnCount1)] * matrix2[getLinearIndex(k, j, columnCount2)];
+                }
+
+                result[i * columnCount2 + j] = sum;
+            }
+        }
+
+        return result;
+    }
+
     private static int getLinearIndex(int row, int column, int columnCount) {
         return row * columnCount + column;
     }

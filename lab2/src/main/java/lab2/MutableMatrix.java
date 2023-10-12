@@ -69,4 +69,14 @@ public class MutableMatrix extends ImmutableMatrix {
     public MutableMatrix multiplyBy(double scalar) {
         return new MutableMatrix(MatrixOperations.multiplyByScalar(data, scalar), dimen);
     }
+
+    @Override
+    public MutableMatrix multiplyBy(ImmutableMatrix other) {
+        ensureCompatibleForMultiplication(other);
+
+        return new MutableMatrix(
+            MatrixOperations.multiplyMatrices(data, other.data, dimen, other.dimen),
+            getDimensionForMultiplicationResult(other)
+        );
+    }
 }
