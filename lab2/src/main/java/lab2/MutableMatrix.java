@@ -15,10 +15,6 @@ public class MutableMatrix extends ImmutableMatrix {
         super(other);
     }
 
-    protected MutableMatrix(double[] data, MatrixDimension dimen) {
-        super(data, dimen);
-    }
-
     public void set(int row, int column, double value) {
         Preconditions.ensureValidIndexComponent(row, dimen.getRowCount(), "row");
         Preconditions.ensureValidIndexComponent(column, dimen.getColumnCount(), "column");
@@ -62,55 +58,37 @@ public class MutableMatrix extends ImmutableMatrix {
 
     @Override
     public MutableMatrix plus(ImmutableMatrix other) {
-        Preconditions.ensureSameDimensions(dimen, other.dimen);
-
-        return new MutableMatrix(MatrixOperations.add(data, other.data), dimen);
+        return new MutableMatrix(super.plus(other));
     }
 
     @Override
     public MutableMatrix multiplyBy(double scalar) {
-        return new MutableMatrix(MatrixOperations.multiplyByScalar(data, scalar), dimen);
+        return new MutableMatrix(super.multiplyBy(scalar));
     }
 
     @Override
     public MutableMatrix multiplyBy(ImmutableMatrix other) {
-        ensureCompatibleForMultiplication(other);
-
-        return new MutableMatrix(
-            MatrixOperations.multiplyMatrices(data, other.data, dimen, other.dimen),
-            getDimensionForMultiplicationResult(other)
-        );
+        return new MutableMatrix(super.multiplyBy(other));
     }
 
     @Override
     public MutableMatrix transposed() {
-        return new MutableMatrix(MatrixOperations.transpose(data, dimen), dimen.interchanged());
+        return new MutableMatrix(super.transposed());
     }
 
     public static MutableMatrix createDiagonal(double[] vector) {
-        return new MutableMatrix(
-            MatrixOperations.createDiagonalMatrix(vector),
-            new MatrixDimension(vector.length)
-        );
+        return new MutableMatrix(ImmutableMatrix.createDiagonal(vector));
     }
 
     public static MutableMatrix createIdentity(int size) {
-        Preconditions.ensureValidDimension(size, "size");
-
-        return new MutableMatrix(MatrixOperations.createIdentity(size), new MatrixDimension(size));
+        return new MutableMatrix(ImmutableMatrix.createIdentity(size));
     }
 
     public static MutableMatrix createRandomRowMatrix(int length, Random random) {
-        return createRandomMatrixInternal(length, random, new MatrixDimension(length, 1));
+        return new MutableMatrix(ImmutableMatrix.createRandomRowMatrix(length, random));
     }
 
     public static MutableMatrix createRandomColumnMatrix(int length, Random random) {
-        return createRandomMatrixInternal(length, random, new MatrixDimension(1, length));
-    }
-
-    private static MutableMatrix createRandomMatrixInternal(int length, Random random, MatrixDimension dimen) {
-        Preconditions.ensureValidLength(length);
-
-        return new MutableMatrix(MatrixOperations.createRandomMatrix(length, random), dimen);
+        return new MutableMatrix(ImmutableMatrix.createRandomColumnMatrix(length, random));
     }
 }

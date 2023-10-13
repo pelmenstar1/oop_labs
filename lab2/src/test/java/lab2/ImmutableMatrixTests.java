@@ -11,6 +11,15 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ImmutableMatrixTests {
+    private static final class FakeRandom extends Random {
+        private int index;
+
+        @Override
+        public double nextDouble() {
+            return index++;
+        }
+    }
+
     @Test
     public void emptyConstructorTest() {
         var matrix = new ImmutableMatrix();
@@ -86,6 +95,36 @@ public class ImmutableMatrixTests {
         assertThrows(IndexOutOfBoundsException.class, () -> matrix.get(0, 2));
     }
 
+    public static Stream<Arguments> getRowTestArguments() {
+        var matrix1 = new ImmutableMatrix(new double[][]{
+            new double[]{0, 1, 2},
+            new double[]{3, 4, 5},
+            new double[]{6, 8, 9}
+        });
+
+        var matrix2 = new ImmutableMatrix(new double[][]{new double[]{1.0}});
+        var matrix3 = new ImmutableMatrix(new double[][]{
+            new double[]{0, 1},
+            new double[]{2, 3},
+            new double[]{4, 5}
+        });
+
+        return Stream.of(
+            Arguments.of(matrix1, 0, new double[]{0, 1, 2}),
+            Arguments.of(matrix1, 2, new double[]{6, 8, 9}),
+            Arguments.of(matrix2, 0, new double[]{1.0}),
+            Arguments.of(matrix3, 1, new double[]{2, 3})
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getRowTestArguments")
+    public void getRowTest(ImmutableMatrix matrix, int index, double[] expectedResult) {
+        double[] actualResult = matrix.getRow(index);
+
+        assertArrayEquals(expectedResult, actualResult);
+    }
+
     @Test
     public void getRowThrowsOnInvalidIndexTest() {
         var matrix = new ImmutableMatrix(2, 2);
@@ -94,12 +133,67 @@ public class ImmutableMatrixTests {
         assertThrows(IndexOutOfBoundsException.class, () -> matrix.getRow(2));
     }
 
+    public static Stream<Arguments> getColumnTestArguments() {
+        var matrix1 = new ImmutableMatrix(new double[][]{
+            new double[]{0, 1, 2},
+            new double[]{3, 4, 5},
+            new double[]{6, 8, 9}
+        });
+
+        var matrix2 = new ImmutableMatrix(new double[][]{new double[]{1.0}});
+        var matrix3 = new ImmutableMatrix(new double[][]{
+            new double[]{0, 1},
+            new double[]{2, 3},
+            new double[]{4, 5}
+        });
+
+        return Stream.of(
+            Arguments.of(matrix1, 0, new double[]{0, 3, 6}),
+            Arguments.of(matrix1, 2, new double[]{2, 5, 9}),
+            Arguments.of(matrix2, 0, new double[]{1}),
+            Arguments.of(matrix3, 1, new double[]{1, 3, 5})
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getColumnTestArguments")
+    public void getColumnTest(ImmutableMatrix matrix, int index, double[] expectedResult) {
+        double[] actualResult = matrix.getColumn(index);
+
+        assertArrayEquals(expectedResult, actualResult);
+    }
+
     @Test
     public void getColumnThrowsOnInvalidIndexTest() {
         var matrix = new ImmutableMatrix(2, 2);
 
         assertThrows(IndexOutOfBoundsException.class, () -> matrix.getColumn(-1));
         assertThrows(IndexOutOfBoundsException.class, () -> matrix.getColumn(2));
+    }
+
+    @Test
+    public void addTest() {
+        var matrix1 = new ImmutableMatrix(new double[][]{
+            new double[]{0, 1, 2},
+            new double[]{3, 4, 5},
+            new double[]{6, 8, 9}
+        });
+
+        var matrix2 = new ImmutableMatrix(new double[][]{
+            new double[]{2, 3, 4},
+            new double[]{5, 6, 7},
+            new double[]{8, 9, 10}
+        });
+
+        var expectedResult = new ImmutableMatrix(new double[][]{
+            new double[]{2, 4, 6},
+            new double[]{8, 10, 12},
+            new double[]{14, 17, 19}
+        });
+
+        ImmutableMatrix actual = matrix1.plus(matrix2);
+
+        assertEquals(expectedResult, actual);
     }
 
     public static Stream<Arguments> addThrowsOnInvalidDimensionsTestArguments() {
@@ -117,6 +211,91 @@ public class ImmutableMatrixTests {
         var other = new ImmutableMatrix(otherColumnCount, otherRowCount);
 
         assertThrows(IllegalArgumentException.class, () -> origin.plus(other));
+    }
+
+    @Test
+    public void multiplyByScalarTest() {
+        var matrix = new ImmutableMatrix(new double[][]{
+            new double[]{0, 1, 2},
+            new double[]{3, 4, 5},
+            new double[]{6, 8, 9}
+        });
+
+        var expectedResult = new ImmutableMatrix(new double[][]{
+            new double[]{0, 2, 4},
+            new double[]{6, 8, 10},
+            new double[]{12, 16, 18}
+        });
+
+        var actual = matrix.multiplyBy(2.0);
+
+        assertEquals(expectedResult, actual);
+    }
+
+    public static Stream<Arguments> multiplyByMatrixTestArguments() {
+        var matrix1 = new ImmutableMatrix(new double[][]{
+            new double[]{0, 1, 2},
+            new double[]{3, 4, 5},
+            new double[]{6, 8, 9}
+        });
+
+        var matrix2 = new ImmutableMatrix(new double[][]{
+            new double[]{0, 2, 4},
+            new double[]{6, 8, 10},
+            new double[]{12, 16, 18}
+        });
+
+        var matrix_1_2_result = new ImmutableMatrix(new double[][]{
+            new double[]{30, 40, 46},
+            new double[]{84, 118, 142},
+            new double[]{156, 220, 266}
+        });
+
+        var matrix3 = new ImmutableMatrix(new double[][]{
+            new double[]{1, 2},
+            new double[]{3, 4}
+        });
+
+        var matrix4 = new ImmutableMatrix(new double[][]{
+            new double[]{10, 20},
+            new double[]{30, 40}
+        });
+
+        var matrix_3_4_result = new ImmutableMatrix(new double[][]{
+            new double[]{70, 100},
+            new double[]{150, 220}
+        });
+
+        var matrix5 = new ImmutableMatrix(new double[][]{
+            new double[]{1, 2},
+            new double[]{3, 4},
+            new double[]{5, 6}
+        });
+
+        var matrix6 = new ImmutableMatrix(new double[][]{
+            new double[]{1, 2, 3},
+            new double[]{4, 5, 6}
+        });
+
+        var matrix_5_6_result = new ImmutableMatrix(new double[][]{
+            new double[]{9, 12, 15},
+            new double[]{19, 26, 33},
+            new double[]{29, 40, 51}
+        });
+
+        return Stream.of(
+            Arguments.of(matrix1, matrix2, matrix_1_2_result),
+            Arguments.of(matrix3, matrix4, matrix_3_4_result),
+            Arguments.of(matrix5, matrix6, matrix_5_6_result)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("multiplyByMatrixTestArguments")
+    public void multiplyByMatrixTest(ImmutableMatrix a, ImmutableMatrix b, ImmutableMatrix expectedResult) {
+        ImmutableMatrix actual = a.multiplyBy(b);
+
+        assertEquals(expectedResult, actual);
     }
 
     public static Stream<Arguments> multiplyByMatrixThrowsOnIncompatibleOtherMatrixTestArguments() {
@@ -163,22 +342,63 @@ public class ImmutableMatrixTests {
         assertEquals(transposedMatrix, matrix);
     }
 
-    @Test
-    public void createDiagonalTest() {
-        var matrix = ImmutableMatrix.createDiagonal(new double[]{1, 2, 3});
+    public static Stream<Arguments> createDiagonalMatrixTestArguments() {
+        double[] vec1 = new double[]{1};
+        double[] vec2 = new double[]{1, 2};
+        double[] vec3 = new double[]{1, 2, 3};
 
-        // 1 0 0
-        // 0 2 0
-        // 0 0 3
-        assertEquals(1, matrix.get(0, 0));
-        assertEquals(0, matrix.get(0, 1));
-        assertEquals(0, matrix.get(0, 2));
-        assertEquals(0, matrix.get(1, 0));
-        assertEquals(2, matrix.get(1, 1));
-        assertEquals(0, matrix.get(1, 2));
-        assertEquals(0, matrix.get(2, 0));
-        assertEquals(0, matrix.get(2, 1));
-        assertEquals(3, matrix.get(2, 2));
+        var result1 = new ImmutableMatrix(new double[][]{new double[]{1}});
+        var result2 = new ImmutableMatrix(new double[][]{
+            new double[]{1, 0},
+            new double[]{0, 2}
+        });
+
+        var result3 = new ImmutableMatrix(new double[][]{
+            new double[]{1, 0, 0},
+            new double[]{0, 2, 0},
+            new double[]{0, 0, 3}
+        });
+
+        return Stream.of(
+            Arguments.of(vec1, result1),
+            Arguments.of(vec2, result2),
+            Arguments.of(vec3, result3)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("createDiagonalMatrixTestArguments")
+    public void createDiagonalMatrixTest(double[] vector, ImmutableMatrix expectedMatrix) {
+        ImmutableMatrix actualMatrix = ImmutableMatrix.createDiagonal(vector);
+
+        assertEquals(expectedMatrix, actualMatrix);
+    }
+
+    public static Stream<Arguments> createIdentityTestArguments() {
+        var matrix1 = new ImmutableMatrix(new double[][]{new double[]{1.0}});
+        var matrix2 = new ImmutableMatrix(new double[][]{
+            new double[]{1.0, 0.0},
+            new double[]{0.0, 1.0}
+        });
+        var matrix3 = new ImmutableMatrix(new double[][]{
+            new double[]{1.0, 0.0, 0.0},
+            new double[]{0.0, 1.0, 0.0},
+            new double[]{0.0, 0.0, 1.0}
+        });
+
+        return Stream.of(
+            Arguments.of(1, matrix1),
+            Arguments.of(2, matrix2),
+            Arguments.of(3, matrix3)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("createIdentityTestArguments")
+    public void createIdentityTest(int size, ImmutableMatrix expectedMatrix) {
+        var actualMatrix = ImmutableMatrix.createIdentity(size);
+
+        assertEquals(expectedMatrix, actualMatrix);
     }
 
     @SuppressWarnings({"EqualsWithItself", "SimplifiableAssertion"}) // That's what we are testing
@@ -224,15 +444,21 @@ public class ImmutableMatrixTests {
 
     @Test
     public void createRandomRowMatrixTest() {
-        var matrix = ImmutableMatrix.createRandomRowMatrix(3, new Random());
+        var matrix = ImmutableMatrix.createRandomRowMatrix(3, new FakeRandom());
+        var expectedResult = new ImmutableMatrix(new double[][]{new double[]{0, 1, 2}});
 
-        assertEquals(new MatrixDimension(3, 1), matrix.getDimension());
+        assertEquals(expectedResult, matrix);
     }
 
     @Test
     public void createRandomColumnMatrixTest() {
-        var matrix = ImmutableMatrix.createRandomColumnMatrix(3, new Random());
+        var matrix = ImmutableMatrix.createRandomColumnMatrix(3, new FakeRandom());
+        var expectedResult = new ImmutableMatrix(new double[][]{
+            new double[]{0},
+            new double[]{1},
+            new double[]{2}
+        });
 
-        assertEquals(new MatrixDimension(1, 3), matrix.getDimension());
+        assertEquals(expectedResult, matrix);
     }
 }
