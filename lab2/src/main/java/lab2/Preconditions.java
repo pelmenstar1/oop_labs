@@ -10,6 +10,12 @@ class Preconditions {
         }
     }
 
+    public static void ensureNonNull(Object value, String argName) {
+        if (value == null) {
+            throw new IllegalArgumentException(argName + " cannot be null");
+        }
+    }
+
     public static void ensureValidIndexComponent(int value, int max, String argName) {
         if (value < 0 || value >= max) {
             throw new IndexOutOfBoundsException(argName + " value is out of bounds");
@@ -19,6 +25,12 @@ class Preconditions {
     public static void ensureSameDimensions(MatrixDimension a, MatrixDimension b) {
         if (!a.equals(b)) {
             throw new IllegalArgumentException("Expected same dimensions");
+        }
+    }
+
+    public static void ensureSquareDimension(MatrixDimension dimen) {
+        if (!dimen.hasSameComponents()) {
+            throw new IllegalStateException("Expected square dimensions");
         }
     }
 

@@ -36,6 +36,10 @@ public final class MatrixDimension {
         return rowCount;
     }
 
+    public boolean hasSameComponents() {
+        return rowCount == columnCount;
+    }
+
     public MatrixDimension interchanged() {
         return new MatrixDimension(rowCount, columnCount);
     }
