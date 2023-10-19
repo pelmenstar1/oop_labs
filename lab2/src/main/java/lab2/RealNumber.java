@@ -57,11 +57,6 @@ public class RealNumber implements AbstractNumber<RealNumber> {
     }
 
     @Override
-    public RealNumber minus(RealNumber other) {
-        return new RealNumber(value - other.value);
-    }
-
-    @Override
     public RealNumber multiply(RealNumber other) {
         return new RealNumber(value * other.value);
     }
@@ -72,13 +67,13 @@ public class RealNumber implements AbstractNumber<RealNumber> {
     }
 
     @Override
-    public RealNumber absolute() {
-        return new RealNumber(Math.abs(value));
+    public RealNumber negated() {
+        return new RealNumber(-value);
     }
 
     @Override
-    public int compareTo(RealNumber o) {
-        return Double.compare(value, o.value);
+    public boolean equalsApproximately(RealNumber other, RealNumber precision) {
+        return Math.abs(value - other.value) < precision.value;
     }
 
     @Override

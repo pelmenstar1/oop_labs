@@ -16,7 +16,7 @@ public class ComplexNumber implements AbstractNumber<ComplexNumber> {
 
         @Override
         public ComplexNumber getEpsilon() {
-            return new ComplexNumber(1e-7, 0);
+            return new ComplexNumber(1e-7, 1e-7);
         }
 
         @Override
@@ -67,11 +67,6 @@ public class ComplexNumber implements AbstractNumber<ComplexNumber> {
     }
 
     @Override
-    public ComplexNumber minus(ComplexNumber other) {
-        return new ComplexNumber(real - other.real, imaginary - other.imaginary);
-    }
-
-    @Override
     public ComplexNumber multiply(ComplexNumber other) {
         double x = real;
         double y = imaginary;
@@ -97,17 +92,14 @@ public class ComplexNumber implements AbstractNumber<ComplexNumber> {
     }
 
     @Override
-    public ComplexNumber absolute() {
-        return new ComplexNumber(Math.hypot(real, imaginary), 0);
+    public ComplexNumber negated() {
+        return new ComplexNumber(-real, -imaginary);
     }
 
     @Override
-    public int compareTo(ComplexNumber o) {
-        if (imaginary != 0 || o.imaginary != 0) {
-            throw new IllegalArgumentException("Cannot compare two complex numbers when one of them has imaginary part");
-        }
-
-        return Double.compare(real, o.real);
+    public boolean equalsApproximately(ComplexNumber other, ComplexNumber precision) {
+        return Math.abs(real - other.real) < precision.real &&
+            Math.abs(imaginary - other.imaginary) < precision.imaginary;
     }
 
     @Override

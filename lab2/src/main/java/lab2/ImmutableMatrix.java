@@ -277,11 +277,10 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof ImmutableMatrix<?> matrix) {
-            return support.equals(matrix.support) && dimen.equals(matrix.dimen) && Arrays.equals(data, matrix.data);
-        }
-
-        return false;
+        return o instanceof ImmutableMatrix<?> matrix &&
+            support.equals(matrix.support) &&
+            dimen.equals(matrix.dimen) &&
+            Arrays.equals(data, matrix.data);
     }
 
     public boolean equalsApproximate(ImmutableMatrix<T> other, T precision) {
@@ -292,9 +291,8 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
         for (int i = 0; i < data.length; i++) {
             T a = data[i];
             T b = other.data[i];
-            T absDiff = a.minus(b).absolute();
 
-            if (absDiff.compareTo(precision) > 0) {
+            if (!a.equalsApproximately(b, precision)) {
                 return false;
             }
         }
