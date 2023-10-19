@@ -21,49 +21,47 @@ public class ImmutableMatrixTests {
     }
 
     public static Stream<Arguments> inverseTestArguments() {
-        var realInputMat1x1 = ImmutableMatrix.createReal(new double[][]{
-            new double[]{2}
-        });
+        var realInputMat1x1 = ImmutableMatrix.createReal(new double[]{2});
 
-        var realInputMat2x2 = ImmutableMatrix.createReal(new double[][]{
+        var realInputMat2x2 = ImmutableMatrix.createReal(
             new double[]{-1, 1.5,},
-            new double[]{1, -1},
-        });
+            new double[]{1, -1}
+        );
 
-        var realInputMat3x3 = ImmutableMatrix.createReal(new double[][]{
+        var realInputMat3x3 = ImmutableMatrix.createReal(
             new double[]{1, 2, 3},
             new double[]{0, 1, 4},
-            new double[]{5, 6, 0},
-        });
+            new double[]{5, 6, 0}
+        );
 
-        var realInputMat4x4 = ImmutableMatrix.createReal(new double[][]{
+        var realInputMat4x4 = ImmutableMatrix.createReal(
             new double[]{1, 2, 3, 4},
             new double[]{6, 7, 8, 9},
             new double[]{20, 20, 21, 22},
             new double[]{19, 7, 8, 1}
-        });
+        );
 
-        var realOutputMat1x1 = ImmutableMatrix.createReal(new double[][]{
+        var realOutputMat1x1 = ImmutableMatrix.createReal(
             new double[]{0.5}
-        });
+        );
 
-        var realOutputMat2x2 = ImmutableMatrix.createReal(new double[][]{
+        var realOutputMat2x2 = ImmutableMatrix.createReal(
             new double[]{2, 3},
-            new double[]{2, 2},
-        });
+            new double[]{2, 2}
+        );
 
-        var realOutputMat3x3 = ImmutableMatrix.createReal(new double[][]{
+        var realOutputMat3x3 = ImmutableMatrix.createReal(
             new double[]{-24, 18, 5},
             new double[]{20, -15, -4},
-            new double[]{-5, 4, 1},
-        });
+            new double[]{-5, 4, 1}
+        );
 
-        var realOutputMat4x4 = ImmutableMatrix.createReal(new double[][]{
+        var realOutputMat4x4 = ImmutableMatrix.createReal(
             new double[]{2.6, -3.6, 1, 0},
             new double[]{-2.575, 2.075, -0.375, -0.125},
             new double[]{-4.45, 7.45, -2.25, 0.25},
             new double[]{4.225, -5.725, 1.625, -0.125}
-        });
+        );
 
         var complexInput2x2 = new ImmutableMatrix<>(ComplexNumber.support(), new ComplexNumber[][]{
             new ComplexNumber[]{new ComplexNumber(1, -1), new ComplexNumber(2)},
@@ -265,23 +263,23 @@ public class ImmutableMatrixTests {
 
     @Test
     public void addTest() {
-        var matrix1 = ImmutableMatrix.createReal(new double[][]{
+        var matrix1 = ImmutableMatrix.createReal(
             new double[]{0, 1, 2},
             new double[]{3, 4, 5},
             new double[]{6, 8, 9}
-        });
+        );
 
-        var matrix2 = ImmutableMatrix.createReal(new double[][]{
+        var matrix2 = ImmutableMatrix.createReal(
             new double[]{2, 3, 4},
             new double[]{5, 6, 7},
             new double[]{8, 9, 10}
-        });
+        );
 
-        var expectedResult = ImmutableMatrix.createReal(new double[][]{
+        var expectedResult = ImmutableMatrix.createReal(
             new double[]{2, 4, 6},
             new double[]{8, 10, 12},
             new double[]{14, 17, 19}
-        });
+        );
 
         ImmutableMatrix<RealNumber> actual = matrix1.plus(matrix2);
 
@@ -307,17 +305,17 @@ public class ImmutableMatrixTests {
 
     @Test
     public void multiplyByScalarTest() {
-        var matrix = ImmutableMatrix.createReal(new double[][]{
+        var matrix = ImmutableMatrix.createReal(
             new double[]{0, 1, 2},
             new double[]{3, 4, 5},
             new double[]{6, 8, 9}
-        });
+        );
 
-        var expectedResult = ImmutableMatrix.createReal(new double[][]{
+        var expectedResult = ImmutableMatrix.createReal(
             new double[]{0, 2, 4},
             new double[]{6, 8, 10},
             new double[]{12, 16, 18}
-        });
+        );
 
         var actual = matrix.multiplyBy(new RealNumber(2.0));
 
@@ -325,55 +323,55 @@ public class ImmutableMatrixTests {
     }
 
     public static Stream<Arguments> multiplyByMatrixTestArguments() {
-        var matrix1 = ImmutableMatrix.createReal(new double[][]{
+        var matrix1 = ImmutableMatrix.createReal(
             new double[]{0, 1, 2},
             new double[]{3, 4, 5},
             new double[]{6, 8, 9}
-        });
+        );
 
-        var matrix2 = ImmutableMatrix.createReal(new double[][]{
+        var matrix2 = ImmutableMatrix.createReal(
             new double[]{0, 2, 4},
             new double[]{6, 8, 10},
             new double[]{12, 16, 18}
-        });
+        );
 
-        var matrix_1_2_result = ImmutableMatrix.createReal(new double[][]{
+        var matrix_1_2_result = ImmutableMatrix.createReal(
             new double[]{30, 40, 46},
             new double[]{84, 118, 142},
             new double[]{156, 220, 266}
-        });
+        );
 
-        var matrix3 = ImmutableMatrix.createReal(new double[][]{
+        var matrix3 = ImmutableMatrix.createReal(
             new double[]{1, 2},
             new double[]{3, 4}
-        });
+        );
 
-        var matrix4 = ImmutableMatrix.createReal(new double[][]{
+        var matrix4 = ImmutableMatrix.createReal(
             new double[]{10, 20},
             new double[]{30, 40}
-        });
+        );
 
-        var matrix_3_4_result = ImmutableMatrix.createReal(new double[][]{
+        var matrix_3_4_result = ImmutableMatrix.createReal(
             new double[]{70, 100},
             new double[]{150, 220}
-        });
+        );
 
-        var matrix5 = ImmutableMatrix.createReal(new double[][]{
+        var matrix5 = ImmutableMatrix.createReal(
             new double[]{1, 2},
             new double[]{3, 4},
             new double[]{5, 6}
-        });
+        );
 
-        var matrix6 = ImmutableMatrix.createReal(new double[][]{
+        var matrix6 = ImmutableMatrix.createReal(
             new double[]{1, 2, 3},
             new double[]{4, 5, 6}
-        });
+        );
 
-        var matrix_5_6_result = ImmutableMatrix.createReal(new double[][]{
+        var matrix_5_6_result = ImmutableMatrix.createReal(
             new double[]{9, 12, 15},
             new double[]{19, 26, 33},
             new double[]{29, 40, 51}
-        });
+        );
 
         return Stream.of(
             Arguments.of(matrix1, matrix2, matrix_1_2_result),
@@ -408,10 +406,10 @@ public class ImmutableMatrixTests {
 
     @Test
     public void transposedTest() {
-        var matrix = ImmutableMatrix.createReal(new double[][]{
+        var matrix = ImmutableMatrix.createReal(
             new double[]{1, 2, 3},
             new double[]{4, 5, 6}
-        });
+        );
 
         var transposedMatrix = matrix.transposed();
         assertEquals(3, transposedMatrix.getDimension().getRowCount());
@@ -452,7 +450,7 @@ public class ImmutableMatrixTests {
             new double[]{4, 5, 6}
         };
 
-        var rows4 = new RealNumber[0][];
+        var rows4 = new double[0][];
 
         var result1 = new ImmutableMatrix<>(RealNumber.support(), new RealNumber[][]{
             new RealNumber[]{new RealNumber(1)}
