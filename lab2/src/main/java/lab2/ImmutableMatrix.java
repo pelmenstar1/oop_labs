@@ -154,7 +154,40 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
     }
 
     public ImmutableMatrix<T> inverse() {
-        return new MatrixInverter<>(this).compute();
+        Preconditions.ensureSquareDimension(getDimension());
+
+        var result = new MutableMatrix<>(this);
+        int size = getDimension().getRowCount();
+
+        T one = support.getOne();
+        T zero = support.getZero();
+
+        for (int k = 0; k < size; k++) {
+            T diagVal = result.get(k, k);
+
+            result.set(k, k, one);
+
+            T invDiagVal = diagVal.inverse();
+
+            for (int j = 0; j < size; j++) {
+                result.set(k, j, result.get(k, j).multiply(invDiagVal));
+            }
+
+            for (int i = 0; i < size; i++) {
+                if (i == k) {
+                    continue;
+                }
+
+                T d = result.get(i, k);
+                result.set(i, k, zero);
+
+                for (int j  = 0; j < size; j++) {
+                    result.set(i, j, result.get(i, j).minus(d.multiply(result.get(k, j))));
+                }
+            }
+        }
+
+        return result;
     }
 
     public static ImmutableMatrix<RealNumber> createReal(double[]... data) {
