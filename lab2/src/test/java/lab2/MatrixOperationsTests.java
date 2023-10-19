@@ -10,32 +10,32 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class MatrixOperationsTests {
     public static Stream<Arguments> setRowsTestArguments() {
-        var rows1 = new double[][] {
-            new double[] { 1, 2, 3 },
-            new double[] { 4, 5, 6 },
-            new double[] { 7, 8, 9 },
+        var rows1 = new RealNumber[][] {
+            new RealNumber[] { new RealNumber( 1), new RealNumber(2), new RealNumber(3) },
+            new RealNumber[] { new RealNumber( 4), new RealNumber(5), new RealNumber(6) },
+            new RealNumber[] { new RealNumber( 7), new RealNumber(8), new RealNumber(9) },
         };
 
-        var rows2 = new double[][] {
-            new double[] { 1 }
+        var rows2 = new RealNumber[][] {
+            new RealNumber[] { new RealNumber( 1) }
         };
 
-        var rows3 = new double[][] {
-            new double[] { 1, 2 },
-            new double[] { 4, 5 },
-            new double[] { 7, 8 },
+        var rows3 = new RealNumber[][] {
+            new RealNumber[] { new RealNumber( 1), new RealNumber(2) },
+            new RealNumber[] { new RealNumber( 4), new RealNumber(5) },
+            new RealNumber[] { new RealNumber( 7), new RealNumber(8) },
         };
 
-        var result1 = new double[] {
-            1, 2, 3,
-            4, 5, 6,
-            7, 8, 9
+        var result1 = new RealNumber[] {
+            new RealNumber(1), new RealNumber(2), new RealNumber(3),
+            new RealNumber(4), new RealNumber(5), new RealNumber(6),
+            new RealNumber(7), new RealNumber(8), new RealNumber(9)
         };
-        var result2 = new double[] { 1 };
-        var result3 = new double[] {
-            1, 2,
-            4, 5,
-            7, 8,
+        var result2 = new RealNumber[] { new RealNumber(1) };
+        var result3 = new RealNumber[] {
+            new RealNumber(1), new RealNumber(2),
+            new RealNumber(4), new RealNumber(5),
+            new RealNumber(7), new RealNumber(8),
         };
 
         var dimen1 = new MatrixDimension(3);
@@ -51,8 +51,8 @@ public class MatrixOperationsTests {
 
     @ParameterizedTest
     @MethodSource("setRowsTestArguments")
-    public void setRowsTest(double[][] rows, double[] expectedResult, MatrixDimension dimen) {
-        double[] actualResult = new double[dimen.getColumnCount() * dimen.getRowCount()];
+    public void setRowsTest(RealNumber[][] rows, RealNumber[] expectedResult, MatrixDimension dimen) {
+        var actualResult = new RealNumber[dimen.getColumnCount() * dimen.getRowCount()];
         MatrixOperations.setRows(actualResult, rows, dimen);
 
         assertArrayEquals(expectedResult, actualResult);

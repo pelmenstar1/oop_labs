@@ -3,57 +3,74 @@ package lab2;
 import java.util.Arrays;
 import java.util.Random;
 
-public class ImmutableMatrix {
-    protected final double[] data;
+public class ImmutableMatrix<T extends AbstractNumber<T>> {
+    protected final T[] data;
     protected final MatrixDimension dimen;
+    protected final AbstractNumberSupport<T> support;
 
-    public ImmutableMatrix() {
-        this(0, 0);
+    public ImmutableMatrix(AbstractNumberSupport<T> support) {
+        this(support, 0, 0);
     }
 
-    public ImmutableMatrix(int columnCount, int rowCount) {
+    public ImmutableMatrix(AbstractNumberSupport<T> support, MatrixDimension dimen) {
+        this(support, dimen.getColumnCount(), dimen.getRowCount());
+    }
+
+    public ImmutableMatrix(AbstractNumberSupport<T> support, int columnCount, int rowCount) {
         // MatrixDimension constructor checks whether columnCount and/or rowCount are valid.
         dimen = new MatrixDimension(columnCount, rowCount);
-        data = new double[columnCount * rowCount];
+        data = support.newArray(columnCount * rowCount);
+        Arrays.fill(data, support.getZero());
+
+        this.support = support;
     }
 
-    public ImmutableMatrix(double[][] rows) {
+    public ImmutableMatrix(AbstractNumberSupport<T> support, T[][] rows) {
         if (rows.length == 0) {
-            data = new double[0];
+            data = support.newArray(0);
             dimen = new MatrixDimension(0);
         } else {
             int columnCount = rows[0].length;
             int rowCount = rows.length;
 
             dimen = new MatrixDimension(columnCount, rowCount);
-            data = new double[columnCount * rowCount];
+            data = support.newArray(columnCount * rowCount);
+            Arrays.fill(data, support.getZero());
 
             MatrixOperations.setRows(data, rows, dimen);
         }
+
+        this.support = support;
     }
 
-    public ImmutableMatrix(ImmutableMatrix other) {
+    public ImmutableMatrix(ImmutableMatrix<T> other) {
         data = Arrays.copyOf(other.data, other.data.length);
         dimen = other.dimen;
+        support = other.support;
     }
 
-    protected ImmutableMatrix(double[] data, MatrixDimension dimen) {
+    protected ImmutableMatrix(AbstractNumberSupport<T> support, T[] data, MatrixDimension dimen) {
         this.data = data;
         this.dimen = dimen;
+        this.support = support;
+    }
+
+    public AbstractNumberSupport<T> getSupport() {
+        return support;
     }
 
     public MatrixDimension getDimension() {
         return dimen;
     }
 
-    public double get(int row, int column) {
+    public T get(int row, int column) {
         Preconditions.ensureValidIndexComponent(row, dimen.getRowCount(), "row");
         Preconditions.ensureValidIndexComponent(column, dimen.getColumnCount(), "column");
 
         return data[linearIndex(row, column)];
     }
 
-    public double[] getRow(int index) {
+    public T[] getRow(int index) {
         Preconditions.ensureValidIndexComponent(index, dimen.getRowCount(), "index");
 
         int columnCount = dimen.getColumnCount();
@@ -62,10 +79,10 @@ public class ImmutableMatrix {
         return Arrays.copyOfRange(data, columnStart, columnStart + columnCount);
     }
 
-    public double[] getColumn(int index) {
+    public T[] getColumn(int index) {
         Preconditions.ensureValidIndexComponent(index, dimen.getColumnCount(), "index");
 
-        double[] column = new double[dimen.getRowCount()];
+        T[] column = support.newArray(dimen.getRowCount());
 
         for (int i = 0; i < column.length; i++) {
             column[i] = data[linearIndex(i, index)];
@@ -74,29 +91,29 @@ public class ImmutableMatrix {
         return column;
     }
 
-    public ImmutableMatrix plus(ImmutableMatrix other) {
+    public ImmutableMatrix<T> plus(ImmutableMatrix<T> other) {
         Preconditions.ensureSameDimensions(dimen, other.dimen);
 
-        double[] output = new double[data.length];
+        T[] output = support.newArray(data.length);
 
         for (int i = 0; i < data.length; i++) {
-            output[i] = data[i] + other.data[i];
+            output[i] = data[i].plus(other.data[i]);
         }
 
-        return new ImmutableMatrix(output, dimen);
+        return new ImmutableMatrix<>(support, output, dimen);
     }
 
-    public ImmutableMatrix multiplyBy(double scalar) {;
-        double[] output = new double[data.length];
+    public ImmutableMatrix<T> multiplyBy(T scalar) {
+        T[] output = support.newArray(data.length);
 
         for (int i = 0; i < data.length; i++) {
-            output[i] = data[i] * scalar;
+            output[i] = data[i].multiply(scalar);
         }
 
-        return new ImmutableMatrix(output, dimen);
+        return new ImmutableMatrix<>(support, output, dimen);
     }
 
-    public ImmutableMatrix multiplyBy(ImmutableMatrix other) {
+    public ImmutableMatrix<T> multiplyBy(ImmutableMatrix<T> other) {
         if (dimen.getColumnCount() != other.dimen.getRowCount()) {
             throw new IllegalArgumentException("Cannot multiply this matrix by other: column count of this matrix is incompatible with other's row count");
         }
@@ -104,25 +121,25 @@ public class ImmutableMatrix {
         int rowCount = dimen.getRowCount();
 
         int otherColumnCount = other.dimen.getColumnCount();
-        double[] result = new double[rowCount * otherColumnCount];
+        T[] result = support.newArray(rowCount * otherColumnCount);
 
         for (int i = 0; i < rowCount; i++) {
             for (int j = 0; j < otherColumnCount; j++) {
-                double sum = 0;
+                T sum = support.getZero();
 
                 for (int k = 0; k < dimen.getColumnCount(); k++) {
-                    sum += get(i, k) * other.get(k, j);
+                    sum = sum.plus(get(i, k).multiply(other.get(k, j)));
                 }
 
                 result[i * otherColumnCount + j] = sum;
             }
         }
 
-        return new ImmutableMatrix(result, new MatrixDimension(otherColumnCount, rowCount));
+        return new ImmutableMatrix<>(support, result, new MatrixDimension(otherColumnCount, rowCount));
     }
 
-    public ImmutableMatrix transposed() {
-        double[] result = new double[data.length];
+    public ImmutableMatrix<T> transposed() {
+        T[] result = support.newArray(data.length);
 
         int rowCount = dimen.getRowCount();
         int columnCount = dimen.getColumnCount();
@@ -133,49 +150,88 @@ public class ImmutableMatrix {
             }
         }
 
-        return new ImmutableMatrix(result, dimen.interchanged());
+        return new ImmutableMatrix<>(support, result, dimen.interchanged());
     }
 
-    public static ImmutableMatrix createDiagonal(double[] vector) {
-        double[] data = new double[vector.length * vector.length];
+    public ImmutableMatrix<T> inverse() {
+        return new MatrixInverter<>(this).compute();
+    }
+
+    public static ImmutableMatrix<RealNumber> createReal(double[]... data) {
+        if (data.length == 0) {
+            return new ImmutableMatrix<>(RealNumber.support());
+        }
+
+        int rowCount = data.length;
+        int columnCount = data[0].length;
+        var dimen = new MatrixDimension(columnCount, rowCount);
+
+        var convertedData = new RealNumber[rowCount * columnCount];
+        MatrixOperations.setRowsReal(convertedData, data, dimen);
+
+        return new ImmutableMatrix<>(RealNumber.support(), convertedData, dimen);
+    }
+
+    public static <T extends AbstractNumber<T>> ImmutableMatrix<T> createDiagonal(
+        AbstractNumberSupport<T> support,
+        T[] vector
+    ) {
+        T[] data = support.newArray(vector.length * vector.length);
+        Arrays.fill(data, support.getZero());
 
         for (int i = 0; i < vector.length; i++) {
             data[linearIndex(i, i, vector.length)] = vector[i];
         }
 
-        return new ImmutableMatrix(data, new MatrixDimension(vector.length));
+        return new ImmutableMatrix<>(support, data, new MatrixDimension(vector.length));
     }
 
-    public static ImmutableMatrix createIdentity(int size) {
+    public static <T extends AbstractNumber<T>> ImmutableMatrix<T> createIdentity(
+        AbstractNumberSupport<T> support,
+        int size
+    ) {
         Preconditions.ensureValidDimension(size, "size");
 
-        double[] data = new double[size * size];
+        T zero = support.getZero();
+        T one = support.getOne();
+
+        T[] data = support.newArray(size * size);
+        Arrays.fill(data, zero);
 
         for (int i = 0; i < size; i++) {
-            data[linearIndex(i, i, size)] = 1.0;
+            data[linearIndex(i, i, size)] = one;
         }
 
-        return new ImmutableMatrix(data, new MatrixDimension(size));
+        return new ImmutableMatrix<>(support, data, new MatrixDimension(size));
     }
 
-    public static ImmutableMatrix createRandomRowMatrix(int length, Random random) {
-       return createRandomMatrixInternal(length, random, new MatrixDimension(length, 1));
+    public static <T extends AbstractNumber<T>> ImmutableMatrix<T> createRandomRowMatrix(
+        AbstractNumberSupport<T> support,
+        int length, Random random
+    ) {
+        return createRandomMatrixInternal(support, length, random, new MatrixDimension(length, 1));
     }
 
-    public static ImmutableMatrix createRandomColumnMatrix(int length, Random random) {
-        return createRandomMatrixInternal(length, random, new MatrixDimension(1, length));
+    public static <T extends AbstractNumber<T>> ImmutableMatrix<T> createRandomColumnMatrix(
+        AbstractNumberSupport<T> support,
+        int length, Random random
+    ) {
+        return createRandomMatrixInternal(support, length, random, new MatrixDimension(1, length));
     }
 
-    private static ImmutableMatrix createRandomMatrixInternal(int length, Random random, MatrixDimension dimen) {
+    private static <T extends AbstractNumber<T>> ImmutableMatrix<T> createRandomMatrixInternal(
+        AbstractNumberSupport<T> support,
+        int length, Random random, MatrixDimension dimen
+    ) {
         Preconditions.ensureValidLength(length);
 
-        double[] data = new double[length];
+        T[] data = support.newArray(length);
 
         for (int i = 0; i < data.length; i++) {
-            data[i] = random.nextDouble();
+            data[i] = support.randomNumber(random);
         }
 
-        return new ImmutableMatrix(data, dimen);
+        return new ImmutableMatrix<>(support, data, dimen);
     }
 
     protected int linearIndex(int row, int column) {
@@ -188,22 +244,46 @@ public class ImmutableMatrix {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof ImmutableMatrix matrix) {
-            return dimen.equals(matrix.dimen) && Arrays.equals(data, matrix.data);
+        if (o instanceof ImmutableMatrix<?> matrix) {
+            return support.equals(matrix.support) && dimen.equals(matrix.dimen) && Arrays.equals(data, matrix.data);
         }
 
         return false;
     }
 
+    public boolean equalsApproximate(ImmutableMatrix<T> other, T precision) {
+        if (!support.equals(other.support) || !dimen.equals(other.dimen)) {
+            return false;
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            T a = data[i];
+            T b = other.data[i];
+            T absDiff = a.minus(b).absolute();
+
+            if (absDiff.compareTo(precision) > 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     @Override
     public int hashCode() {
-        return Arrays.hashCode(data) * 31 + dimen.hashCode();
+        int result = Arrays.hashCode(data);
+        result = result * 31 + dimen.hashCode();
+        result = result * 31 + support.hashCode();
+
+        return result;
     }
 
     @Override
     public String toString() {
         var sb = new StringBuilder();
-        sb.append("ImmutableMatrix { dimension=");
+        sb.append("ImmutableMatrix<");
+        sb.append(support.getNumberClass());
+        sb.append("> {");
         sb.append(dimen.getRowCount()).append('x').append(dimen.getColumnCount());
         sb.append(", data=[");
 

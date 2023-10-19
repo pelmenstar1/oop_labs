@@ -2,27 +2,36 @@ package lab2;
 
 import java.util.Random;
 
-public class MutableMatrix extends ImmutableMatrix {
-    public MutableMatrix() {
-        super();
+public class MutableMatrix<T extends AbstractNumber<T>> extends ImmutableMatrix<T> {
+    public MutableMatrix(AbstractNumberSupport<T> support) {
+        super(support);
     }
 
-    public MutableMatrix(int columnCount, int rowCount) {
-        super(columnCount, rowCount);
+    public MutableMatrix(AbstractNumberSupport<T> support, int columnCount, int rowCount) {
+        super(support, columnCount, rowCount);
     }
 
-    public MutableMatrix(ImmutableMatrix other) {
+    public MutableMatrix(AbstractNumberSupport<T> support, T[][] rows) {
+        super(support, rows);
+    }
+
+    public MutableMatrix(ImmutableMatrix<T> other) {
         super(other);
     }
 
-    public void set(int row, int column, double value) {
+    protected MutableMatrix(AbstractNumberSupport<T> support, T[] data, MatrixDimension dimen) {
+        super(support, data, dimen);
+    }
+
+    public void set(int row, int column, T value) {
+        Preconditions.ensureNonNull(value, "value");
         Preconditions.ensureValidIndexComponent(row, dimen.getRowCount(), "row");
         Preconditions.ensureValidIndexComponent(column, dimen.getColumnCount(), "column");
 
         data[linearIndex(row, column)] = value;
     }
 
-    public void setRow(int index, double[] row) {
+    public void setRow(int index, T[] row) {
         Preconditions.ensureValidIndexComponent(index, dimen.getRowCount(), "index");
 
         if (row.length != dimen.getColumnCount()) {
@@ -34,21 +43,19 @@ public class MutableMatrix extends ImmutableMatrix {
         System.arraycopy(row, 0, data, index * columnCount, columnCount);
     }
 
-    public void setColumn(int index, double[] column) {
-        int columnCount = dimen.getColumnCount();
-
-        Preconditions.ensureValidIndexComponent(index, columnCount, "index");
+    public void setColumn(int index, T[] column) {
+        Preconditions.ensureValidIndexComponent(index, dimen.getColumnCount(), "index");
 
         if (column.length != dimen.getRowCount()) {
             throw new IllegalArgumentException("column's length should equal to the row count of the matrix");
         }
 
         for (int i = 0; i < column.length; i++) {
-            data[i * columnCount + index] = column[i];
+            set(i, index, column[i]);
         }
     }
 
-    public void set(double[][] rows) {
+    public void set(T[][] rows) {
         if (rows.length != dimen.getRowCount()) {
             throw new IllegalArgumentException("rows length should equal to the row count of the matrix");
         }
@@ -56,39 +63,63 @@ public class MutableMatrix extends ImmutableMatrix {
         MatrixOperations.setRows(data, rows, dimen);
     }
 
-    @Override
-    public MutableMatrix plus(ImmutableMatrix other) {
-        return new MutableMatrix(super.plus(other));
+    public void set(ImmutableMatrix<T> other) {
+        Preconditions.ensureSameDimensions(getDimension(), other.getDimension());
+
+        System.arraycopy(other.data, 0, data, 0, data.length);
     }
 
     @Override
-    public MutableMatrix multiplyBy(double scalar) {
-        return new MutableMatrix(super.multiplyBy(scalar));
+    public MutableMatrix<T> plus(ImmutableMatrix<T> other) {
+        return new MutableMatrix<>(super.plus(other));
     }
 
     @Override
-    public MutableMatrix multiplyBy(ImmutableMatrix other) {
-        return new MutableMatrix(super.multiplyBy(other));
+    public MutableMatrix<T> multiplyBy(T scalar) {
+        return new MutableMatrix<>(super.multiplyBy(scalar));
     }
 
     @Override
-    public MutableMatrix transposed() {
-        return new MutableMatrix(super.transposed());
+    public MutableMatrix<T> multiplyBy(ImmutableMatrix<T> other) {
+        return new MutableMatrix<>(super.multiplyBy(other));
     }
 
-    public static MutableMatrix createDiagonal(double[] vector) {
-        return new MutableMatrix(ImmutableMatrix.createDiagonal(vector));
+    @Override
+    public MutableMatrix<T> transposed() {
+        return new MutableMatrix<>(super.transposed());
     }
 
-    public static MutableMatrix createIdentity(int size) {
-        return new MutableMatrix(ImmutableMatrix.createIdentity(size));
+    public MutableMatrix<T> inverse() {
+        return new MutableMatrix<>(super.inverse());
     }
 
-    public static MutableMatrix createRandomRowMatrix(int length, Random random) {
-        return new MutableMatrix(ImmutableMatrix.createRandomRowMatrix(length, random));
+    public static<T extends AbstractNumber<T>> MutableMatrix<T> createDiagonal(
+        AbstractNumberSupport<T> support,
+        T[] vector
+    ) {
+        return new MutableMatrix<>(ImmutableMatrix.createDiagonal(support, vector));
     }
 
-    public static MutableMatrix createRandomColumnMatrix(int length, Random random) {
-        return new MutableMatrix(ImmutableMatrix.createRandomColumnMatrix(length, random));
+    public static<T extends AbstractNumber<T>> MutableMatrix<T> createIdentity(
+        AbstractNumberSupport<T> support,
+        int size
+    ) {
+        return new MutableMatrix<>(ImmutableMatrix.createIdentity(support, size));
+    }
+
+    public static<T extends AbstractNumber<T>> MutableMatrix<T> createRandomRowMatrix(
+        AbstractNumberSupport<T> support,
+        int length,
+        Random random
+    ) {
+        return new MutableMatrix<>(ImmutableMatrix.createRandomRowMatrix(support, length, random));
+    }
+
+    public static<T extends AbstractNumber<T>> MutableMatrix<T> createRandomColumnMatrix(
+        AbstractNumberSupport<T> support,
+        int length,
+        Random random
+    ) {
+        return new MutableMatrix<>(ImmutableMatrix.createRandomColumnMatrix(support, length, random));
     }
 }

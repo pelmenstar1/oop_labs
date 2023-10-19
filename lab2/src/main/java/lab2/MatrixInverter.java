@@ -1,12 +1,10 @@
 package lab2;
 
-import java.util.Arrays;
-
 public final class MatrixInverter<T extends AbstractNumber<T>> {
-    private final GenericImmutableMatrix<T> matrix;
+    private final ImmutableMatrix<T> matrix;
    // private final GenericMutableMatrix<T> augmented;
 
-    public MatrixInverter(GenericImmutableMatrix<T> matrix) {
+    public MatrixInverter(ImmutableMatrix<T> matrix) {
 
 
         this.matrix = matrix;
@@ -39,8 +37,8 @@ public final class MatrixInverter<T extends AbstractNumber<T>> {
     }
     */
 
-    public GenericImmutableMatrix<T> compute() {
-        var result = new GenericMutableMatrix<>(matrix);
+    public ImmutableMatrix<T> compute() {
+        var result = new MutableMatrix<>(matrix);
         int size = matrix.getDimension().getRowCount();
 
         T one = numberSupport().getOne();
