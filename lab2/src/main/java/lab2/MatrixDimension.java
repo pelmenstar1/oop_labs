@@ -23,11 +23,6 @@ public final class MatrixDimension {
         this.rowCount = rowCount;
     }
 
-    public MatrixDimension(MatrixDimension other) {
-        columnCount = other.columnCount;
-        rowCount = other.rowCount;
-    }
-
     public int getColumnCount() {
         return columnCount;
     }
@@ -46,12 +41,9 @@ public final class MatrixDimension {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        MatrixDimension other = (MatrixDimension) o;
-
-        return columnCount == other.columnCount && rowCount == other.rowCount;
+        return o instanceof MatrixDimension other &&
+            columnCount == other.columnCount &&
+            rowCount == other.rowCount;
     }
 
     @Override
