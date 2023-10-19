@@ -19,8 +19,7 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
     public ImmutableMatrix(AbstractNumberSupport<T> support, int columnCount, int rowCount) {
         // MatrixDimension constructor checks whether columnCount and/or rowCount are valid.
         dimen = new MatrixDimension(columnCount, rowCount);
-        data = support.newArray(columnCount * rowCount);
-        Arrays.fill(data, support.getZero());
+        data = support.newZeroArray(columnCount * rowCount);
 
         this.support = support;
     }
@@ -34,8 +33,7 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
             int rowCount = rows.length;
 
             dimen = new MatrixDimension(columnCount, rowCount);
-            data = support.newArray(columnCount * rowCount);
-            Arrays.fill(data, support.getZero());
+            data = support.newZeroArray(columnCount * rowCount);
 
             MatrixOperations.setRows(data, rows, dimen);
         }
@@ -209,8 +207,7 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
         AbstractNumberSupport<T> support,
         T[] vector
     ) {
-        T[] data = support.newArray(vector.length * vector.length);
-        Arrays.fill(data, support.getZero());
+        T[] data = support.newZeroArray(vector.length * vector.length);
 
         for (int i = 0; i < vector.length; i++) {
             data[linearIndex(i, i, vector.length)] = vector[i];
@@ -225,11 +222,8 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
     ) {
         Preconditions.ensureValidDimension(size, "size");
 
-        T zero = support.getZero();
+        T[] data = support.newZeroArray(size * size);
         T one = support.getOne();
-
-        T[] data = support.newArray(size * size);
-        Arrays.fill(data, zero);
 
         for (int i = 0; i < size; i++) {
             data[linearIndex(i, i, size)] = one;
