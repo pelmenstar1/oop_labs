@@ -13,12 +13,12 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
     }
 
     public ImmutableMatrix(AbstractNumberSupport<T> support, MatrixDimension dimen) {
-        this(support, dimen.getColumnCount(), dimen.getRowCount());
+        this(support, dimen.getRowCount(), dimen.getColumnCount());
     }
 
-    public ImmutableMatrix(AbstractNumberSupport<T> support, int columnCount, int rowCount) {
+    public ImmutableMatrix(AbstractNumberSupport<T> support, int rowCount, int columnCount) {
         // MatrixDimension constructor checks whether columnCount and/or rowCount are valid.
-        dimen = new MatrixDimension(columnCount, rowCount);
+        dimen = new MatrixDimension(rowCount, columnCount);
         data = support.newZeroArray(columnCount * rowCount);
 
         this.support = support;
@@ -32,7 +32,7 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
             int columnCount = rows[0].length;
             int rowCount = rows.length;
 
-            dimen = new MatrixDimension(columnCount, rowCount);
+            dimen = new MatrixDimension(rowCount, columnCount);
             data = support.newZeroArray(columnCount * rowCount);
 
             MatrixOperations.setRows(data, rows, dimen);
@@ -133,7 +133,7 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
             }
         }
 
-        return new ImmutableMatrix<>(support, result, new MatrixDimension(otherColumnCount, rowCount));
+        return new ImmutableMatrix<>(support, result, new MatrixDimension(rowCount, otherColumnCount));
     }
 
     public ImmutableMatrix<T> transposed() {
@@ -195,7 +195,7 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
 
         int rowCount = data.length;
         int columnCount = data[0].length;
-        var dimen = new MatrixDimension(columnCount, rowCount);
+        var dimen = new MatrixDimension(rowCount, columnCount);
 
         var convertedData = new RealNumber[rowCount * columnCount];
         MatrixOperations.setRowsReal(convertedData, data, dimen);
@@ -236,14 +236,14 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> {
         AbstractNumberSupport<T> support,
         int length, Random random
     ) {
-        return createRandomMatrixInternal(support, length, random, new MatrixDimension(length, 1));
+        return createRandomMatrixInternal(support, length, random, new MatrixDimension(1, length));
     }
 
     public static <T extends AbstractNumber<T>> ImmutableMatrix<T> createRandomColumnMatrix(
         AbstractNumberSupport<T> support,
         int length, Random random
     ) {
-        return createRandomMatrixInternal(support, length, random, new MatrixDimension(1, length));
+        return createRandomMatrixInternal(support, length, random, new MatrixDimension(length, 1));
     }
 
     private static <T extends AbstractNumber<T>> ImmutableMatrix<T> createRandomMatrixInternal(

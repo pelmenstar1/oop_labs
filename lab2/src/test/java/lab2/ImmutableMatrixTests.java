@@ -115,9 +115,9 @@ public class ImmutableMatrixTests {
 
     @Test
     public void dimensionsConstructorTest() {
-        var matrix = new ImmutableMatrix<>(RealNumber.support(), 5, 3);
+        var matrix = new ImmutableMatrix<>(RealNumber.support(), 3, 5);
 
-        assertEquals(new MatrixDimension(5, 3), matrix.getDimension());
+        assertEquals(new MatrixDimension(3, 5), matrix.getDimension());
     }
 
     public static Stream<Arguments> dimensionsConstructorThrowsOnInvalidDimensionsTestArguments() {
@@ -131,7 +131,7 @@ public class ImmutableMatrixTests {
     @ParameterizedTest
     @MethodSource("dimensionsConstructorThrowsOnInvalidDimensionsTestArguments")
     public void dimensionsConstructorThrowsOnInvalidDimensionsTest(int columnCount, int rowCount) {
-        assertThrows(IllegalArgumentException.class, () -> new ImmutableMatrix<>(RealNumber.support(), columnCount, rowCount));
+        assertThrows(IllegalArgumentException.class, () -> new ImmutableMatrix<>(RealNumber.support(), rowCount, columnCount));
     }
 
     @Test
@@ -297,8 +297,8 @@ public class ImmutableMatrixTests {
     @ParameterizedTest
     @MethodSource("addThrowsOnInvalidDimensionsTestArguments")
     public void addThrowsOnInvalidDimensionsTest(int thisColumnCount, int thisRowCount, int otherColumnCount, int otherRowCount) {
-        var origin = new ImmutableMatrix<>(RealNumber.support(), thisColumnCount, thisRowCount);
-        var other = new ImmutableMatrix<>(RealNumber.support(), otherColumnCount, otherRowCount);
+        var origin = new ImmutableMatrix<>(RealNumber.support(), thisRowCount, thisColumnCount);
+        var other = new ImmutableMatrix<>(RealNumber.support(), otherRowCount, otherColumnCount);
 
         assertThrows(IllegalArgumentException.class, () -> origin.plus(other));
     }
@@ -398,8 +398,8 @@ public class ImmutableMatrixTests {
     @ParameterizedTest
     @MethodSource("multiplyByMatrixThrowsOnIncompatibleOtherMatrixTestArguments")
     public void multiplyByMatrixThrowsOnIncompatibleOtherMatrixTest(int thisColumnCount, int thisRowCount, int otherColumnCount, int otherRowCount) {
-        var origin = new ImmutableMatrix<>(RealNumber.support(), thisColumnCount, thisRowCount);
-        var other = new ImmutableMatrix<>(RealNumber.support(), otherColumnCount, otherRowCount);
+        var origin = new ImmutableMatrix<>(RealNumber.support(), thisRowCount, thisColumnCount);
+        var other = new ImmutableMatrix<>(RealNumber.support(), otherRowCount, otherColumnCount);
 
         assertThrows(IllegalArgumentException.class, () -> origin.multiplyBy(other));
     }
@@ -552,7 +552,7 @@ public class ImmutableMatrixTests {
         var matrix = ImmutableMatrix.createReal(data1);
         var matrixWithSameData = ImmutableMatrix.createReal(data1);
         var matrixWithDifferentData = ImmutableMatrix.createReal(data2);
-        var matrixWithDifferentSize = new ImmutableMatrix<>(RealNumber.support(), 2, 3);
+        var matrixWithDifferentSize = new ImmutableMatrix<>(RealNumber.support(), 3, 2);
 
         assertTrue(matrix.equals(matrix));
 

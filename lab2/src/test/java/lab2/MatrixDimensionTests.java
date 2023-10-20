@@ -31,7 +31,7 @@ public class MatrixDimensionTests {
     @ParameterizedTest
     @MethodSource("twoComponentConstructorTestArguments")
     public void twoComponentConstructorTest(int columnCount, int rowCount) {
-        var dimen = new MatrixDimension(columnCount, rowCount);
+        var dimen = new MatrixDimension(rowCount, columnCount);
 
         assertEquals(columnCount, dimen.getColumnCount());
         assertEquals(rowCount, dimen.getRowCount());
@@ -48,13 +48,13 @@ public class MatrixDimensionTests {
     @ParameterizedTest
     @MethodSource("sizeConstructorThrowsTestArguments")
     public void sizeConstructorThrowsTest(int columnCount, int rowCount) {
-        assertThrows(IllegalArgumentException.class, () -> new MatrixDimension(columnCount, rowCount));
+        assertThrows(IllegalArgumentException.class, () -> new MatrixDimension(rowCount, columnCount));
     }
 
     public static Stream<Arguments> interchangedTestArguments() {
         return Stream.of(
             Arguments.of(new MatrixDimension(0, 0), new MatrixDimension(0, 0)),
-            Arguments.of(new MatrixDimension(1, 2), new MatrixDimension(2, 1))
+            Arguments.of(new MatrixDimension(2, 1), new MatrixDimension(1, 2))
         );
     }
 
@@ -70,9 +70,9 @@ public class MatrixDimensionTests {
     @SuppressWarnings({"SimplifiableAssertion", "EqualsWithItself", "ConstantValue"})
     @Test
     public void equalsTest() {
-        var instance1 = new MatrixDimension(1, 2);
-        var instance2 = new MatrixDimension(1, 2);
-        var instance3 = new MatrixDimension(2, 1);
+        var instance1 = new MatrixDimension(2, 1);
+        var instance2 = new MatrixDimension(2, 1);
+        var instance3 = new MatrixDimension(1, 2);
 
         assertTrue(instance1.equals(instance1)); // should be equal to itself
         assertTrue(instance1.equals(instance2)); // should be equal to the instance with same data
@@ -83,8 +83,8 @@ public class MatrixDimensionTests {
 
     @Test
     public void hashCodeTest() {
-        var instance1 = new MatrixDimension(1, 2);
-        var instance2 = new MatrixDimension(1, 2);
+        var instance1 = new MatrixDimension(2, 1);
+        var instance2 = new MatrixDimension(2, 1);
 
         // There might be collisions, so we can't actually except that instances with different data have different hashes.
         // But, at least, instances with same data must have same hashes.
@@ -96,7 +96,7 @@ public class MatrixDimensionTests {
 
     @Test
     public void toStringTest() {
-        var instance = new MatrixDimension(2, 3);
+        var instance = new MatrixDimension(3, 2);
 
         String actualStr = instance.toString();
         String expectedStr = "MatrixDimension { columnCount=2, rowCount=3 }";

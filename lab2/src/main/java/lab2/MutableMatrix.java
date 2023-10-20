@@ -7,8 +7,8 @@ public class MutableMatrix<T extends AbstractNumber<T>> extends ImmutableMatrix<
         super(support);
     }
 
-    public MutableMatrix(AbstractNumberSupport<T> support, int columnCount, int rowCount) {
-        super(support, columnCount, rowCount);
+    public MutableMatrix(AbstractNumberSupport<T> support, int rowCount, int columnCount) {
+        super(support, rowCount, columnCount);
     }
 
     public MutableMatrix(AbstractNumberSupport<T> support, T[][] rows) {

@@ -8,16 +8,16 @@ public final class MatrixDimension {
         this(size, size);
     }
 
-    public MatrixDimension(int columnCount, int rowCount) {
-        if (columnCount == 0 && rowCount == 0) {
-            this.columnCount = 0;
+    public MatrixDimension(int rowCount, int columnCount) {
+        if (rowCount == 0 && columnCount == 0) {
             this.rowCount = 0;
+            this.columnCount = 0;
 
             return;
         }
 
-        Preconditions.ensureValidDimension(columnCount, "columnCount");
         Preconditions.ensureValidDimension(rowCount, "rowCount");
+        Preconditions.ensureValidDimension(columnCount, "columnCount");
 
         this.columnCount = columnCount;
         this.rowCount = rowCount;
@@ -36,7 +36,7 @@ public final class MatrixDimension {
     }
 
     public MatrixDimension interchanged() {
-        return new MatrixDimension(rowCount, columnCount);
+        return new MatrixDimension(columnCount, rowCount);
     }
 
     @Override

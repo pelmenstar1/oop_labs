@@ -40,7 +40,7 @@ public class MatrixOperationsTests {
 
         var dimen1 = new MatrixDimension(3);
         var dimen2 = new MatrixDimension(1);
-        var dimen3 = new MatrixDimension(2, 3);
+        var dimen3 = new MatrixDimension(3, 2);
 
         return Stream.of(
             Arguments.of(rows1, result1, dimen1),
