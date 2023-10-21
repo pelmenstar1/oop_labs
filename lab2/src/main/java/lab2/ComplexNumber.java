@@ -104,11 +104,9 @@ public class ComplexNumber implements AbstractNumber<ComplexNumber> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ComplexNumber number) {
-            return real == number.real && imaginary == number.imaginary;
-        }
-
-        return false;
+        return obj instanceof ComplexNumber number &&
+            real == number.real &&
+            imaginary == number.imaginary;
     }
 
     @Override

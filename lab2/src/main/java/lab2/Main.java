@@ -61,7 +61,7 @@ public class Main {
         prettyPrintMatrix(result);
     }
 
-    private static MutableMatrix<RealNumber> readMatrix(BufferedReader reader) throws IOException {
+    private static ImmutableMatrix<RealNumber> readMatrix(BufferedReader reader) throws IOException {
         MatrixDimension dimen = readMatrixDimension(reader);
         System.out.println("Way to fill a matrix: ");
         System.out.println("1. With numbers");
@@ -73,7 +73,7 @@ public class Main {
         int choice = Integer.parseInt(reader.readLine());
         var random = new Random();
 
-        MutableMatrix<RealNumber> result;
+        ImmutableMatrix<RealNumber> result;
 
         switch (choice) {
             case 1: // With numbers
@@ -87,11 +87,11 @@ public class Main {
                 int size = dimen.getRowCount();
 
                 if (choice == 2) {
-                    result = MutableMatrix.createIdentity(RealNumber.support(), size);
+                    result = ImmutableMatrix.createIdentity(RealNumber.support(), size);
                 } else {
                     var numbers = readRealNumberRow(reader);
 
-                    result = MutableMatrix.createDiagonal(RealNumber.support(), numbers);
+                    result = ImmutableMatrix.createDiagonal(RealNumber.support(), numbers);
                 }
                 break;
             case 4: { // Row-random
@@ -99,7 +99,7 @@ public class Main {
                     throw new RuntimeException("The matrix is not row-like");
                 }
 
-                result = MutableMatrix.createRandomRowMatrix(RealNumber.support(), dimen.getColumnCount(), random);
+                result = ImmutableMatrix.createRandomRowMatrix(RealNumber.support(), dimen.getColumnCount(), random);
                 break;
             }
             case 5: { // Column-random
@@ -107,7 +107,7 @@ public class Main {
                     throw new RuntimeException("The matrix is not column-like");
                 }
 
-                result = MutableMatrix.createRandomColumnMatrix(RealNumber.support(), dimen.getRowCount(), random);
+                result = ImmutableMatrix.createRandomColumnMatrix(RealNumber.support(), dimen.getRowCount(), random);
                 break;
             }
             default:
@@ -130,7 +130,7 @@ public class Main {
         return new MatrixDimension(rows, columns);
     }
 
-    private static MutableMatrix<RealNumber> readExactMatrix(
+    private static ImmutableMatrix<RealNumber> readExactMatrix(
         MatrixDimension dimen,
         BufferedReader reader
     ) throws IOException {
@@ -150,7 +150,7 @@ public class Main {
             }
         }
 
-        return new MutableMatrix<>(RealNumber.support(), data);
+        return new ImmutableMatrix<>(RealNumber.support(), data);
     }
 
     private static RealNumber[] readRealNumberRow(BufferedReader reader) throws IOException {
@@ -159,7 +159,7 @@ public class Main {
             .toArray(RealNumber[]::new);
     }
 
-    private static void prettyPrintMatrix(ImmutableMatrix<RealNumber> matrix) {
+    private static void prettyPrintMatrix(MutableMatrix<RealNumber> matrix) {
         MatrixDimension dimen = matrix.getDimension();
 
         for (int i = 0; i < dimen.getRowCount(); i++) {
