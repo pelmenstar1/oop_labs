@@ -105,13 +105,13 @@ public class ComplexNumber implements AbstractNumber<ComplexNumber> {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof ComplexNumber number &&
-            real == number.real &&
-            imaginary == number.imaginary;
+            DoubleUtils.normalizedEquals(real, number.real) &&
+            DoubleUtils.normalizedEquals(imaginary, number.imaginary);
     }
 
     @Override
     public int hashCode() {
-        return Double.hashCode(real) * 31 + Double.hashCode(imaginary);
+        return DoubleUtils.normalizedHashCode(real) * 31 + DoubleUtils.normalizedHashCode(imaginary);
     }
 
     @Override

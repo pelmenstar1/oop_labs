@@ -78,12 +78,12 @@ public class RealNumber implements AbstractNumber<RealNumber> {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof RealNumber number && value == number.value;
+        return o instanceof RealNumber other && DoubleUtils.normalizedEquals(value, other.value);
     }
 
     @Override
     public int hashCode() {
-        return Double.hashCode(value);
+        return DoubleUtils.normalizedHashCode(value);
     }
 
     @Override
