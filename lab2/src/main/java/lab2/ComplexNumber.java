@@ -15,7 +15,7 @@ public class ComplexNumber implements AbstractNumber<ComplexNumber> {
         }
 
         @Override
-        public ComplexNumber getEpsilon() {
+        public ComplexNumber getPrecision() {
             return new ComplexNumber(1e-7, 1e-7);
         }
 
@@ -96,10 +96,19 @@ public class ComplexNumber implements AbstractNumber<ComplexNumber> {
         return new ComplexNumber(-real, -imaginary);
     }
 
+    public double magnitude() {
+        return Math.hypot(real, imaginary);
+    }
+
     @Override
     public boolean equalsApproximately(ComplexNumber other, ComplexNumber precision) {
         return Math.abs(real - other.real) < precision.real &&
             Math.abs(imaginary - other.imaginary) < precision.imaginary;
+    }
+
+    @Override
+    public int compareMagnitude(ComplexNumber other) {
+        return Double.compare(magnitude(), other.magnitude());
     }
 
     @Override

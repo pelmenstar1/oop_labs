@@ -106,8 +106,11 @@ public class ImmutableMatrix<T extends AbstractNumber<T>> extends MutableMatrix<
         return new ImmutableMatrix<>(MutableMatrix.createRandomColumnMatrix(support, length, random));
     }
 
-    @Override
-    public String toString() {
-        return super.toString();
+    public static <T extends AbstractNumber<T>> MutableMatrix<T> createRandomMatrix(
+        AbstractNumberSupport<T> support,
+        int rowCount, int columnCount,
+        Random random
+    ) {
+        return new ImmutableMatrix<>(MutableMatrix.createRandomMatrix(support, rowCount, columnCount, random));
     }
 }

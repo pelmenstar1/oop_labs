@@ -15,7 +15,7 @@ public class RealNumber implements AbstractNumber<RealNumber> {
         }
 
         @Override
-        public RealNumber getEpsilon() {
+        public RealNumber getPrecision() {
             return new RealNumber(1e-7);
         }
 
@@ -74,6 +74,11 @@ public class RealNumber implements AbstractNumber<RealNumber> {
     @Override
     public boolean equalsApproximately(RealNumber other, RealNumber precision) {
         return Math.abs(value - other.value) < precision.value;
+    }
+
+    @Override
+    public int compareMagnitude(RealNumber other) {
+        return Double.compare(Math.abs(value), Math.abs(other.value));
     }
 
     @Override

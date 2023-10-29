@@ -12,4 +12,5 @@ public interface AbstractNumber<T extends AbstractNumber<T>> {
     }
 
     boolean equalsApproximately(T other, T precision);
+    int compareMagnitude(T other);
 }

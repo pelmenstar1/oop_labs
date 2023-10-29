@@ -2,6 +2,7 @@ package lab2;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.function.Function;
 
 public class MutableMatrix<T extends AbstractNumber<T>> {
     protected final T[] data;
@@ -78,15 +79,22 @@ public class MutableMatrix<T extends AbstractNumber<T>> {
     }
 
     public T[] getColumn(int index) {
-        Preconditions.ensureValidIndexComponent(index, dimen.getColumnCount(), "index");
-
         T[] column = support.newArray(dimen.getRowCount());
-
-        for (int i = 0; i < column.length; i++) {
-            column[i] = data[linearIndex(i, index)];
-        }
+        copyColumn(index, column);
 
         return column;
+    }
+
+    public void copyColumn(int column, T[] outVector) {
+        if (outVector.length != dimen.getRowCount()) {
+            throw new IllegalArgumentException("outVector should be the same length as matrix's row count");
+        }
+
+        Preconditions.ensureValidIndexComponent(column, dimen.getColumnCount(), "column");
+
+        for (int i = 0; i < dimen.getRowCount(); i++) {
+            outVector[i] = get(i, column);
+        }
     }
 
     public void set(int row, int column, T value) {
@@ -129,10 +137,32 @@ public class MutableMatrix<T extends AbstractNumber<T>> {
         MatrixOperations.setRows(data, rows, dimen);
     }
 
+    public void swapElements(int row1, int column1, int row2, int column2) {
+        T t = get(row1, column1);
+        set(row1, column1, get(row2, column2));
+        set(row2, column2, t);
+    }
+
     public void set(MutableMatrix<T> other) {
         Preconditions.ensureSameDimensions(getDimension(), other.getDimension());
 
         System.arraycopy(other.data, 0, data, 0, data.length);
+    }
+
+    public void update(int row, int column, Function<T, T> mapping) {
+        set(row, column, mapping.apply(get(row, column)));
+    }
+
+    public void updateRow(int row, Function<T, T> mapping) {
+        Preconditions.ensureValidIndexComponent(row, dimen.getRowCount(), "row");
+
+        int columnCount = dimen.getColumnCount();
+        int mapStart = row * columnCount;
+        int mapEnd = mapStart + columnCount;
+
+        for (int i = mapStart; i < mapEnd; i++) {
+            data[i] = mapping.apply(data[i]);
+        }
     }
 
     public MutableMatrix<T> plus(MutableMatrix<T> other) {
@@ -200,38 +230,9 @@ public class MutableMatrix<T extends AbstractNumber<T>> {
     public MutableMatrix<T> inverse() {
         Preconditions.ensureSquareDimension(getDimension());
 
-        var result = new MutableMatrix<>(this);
-        int size = getDimension().getRowCount();
+        var matrixClone = new MutableMatrix<>(this);
 
-        T one = support.getOne();
-        T zero = support.getZero();
-
-        for (int k = 0; k < size; k++) {
-            T diagVal = result.get(k, k);
-
-            result.set(k, k, one);
-
-            T invDiagVal = diagVal.inverse();
-
-            for (int j = 0; j < size; j++) {
-                result.set(k, j, result.get(k, j).multiply(invDiagVal));
-            }
-
-            for (int i = 0; i < size; i++) {
-                if (i == k) {
-                    continue;
-                }
-
-                T d = result.get(i, k);
-                result.set(i, k, zero);
-
-                for (int j  = 0; j < size; j++) {
-                    result.set(i, j, result.get(i, j).minus(d.multiply(result.get(k, j))));
-                }
-            }
-        }
-
-        return result;
+        return LUFactorization.inverseMatrix(matrixClone);
     }
 
     public static MutableMatrix<RealNumber> createReal(double[]... data) {
@@ -282,31 +283,31 @@ public class MutableMatrix<T extends AbstractNumber<T>> {
         AbstractNumberSupport<T> support,
         int length, Random random
     ) {
-        return createRandomMatrixInternal(support, length, random, new MatrixDimension(1, length));
+        return createRandomMatrix(support, 1, length, random);
     }
 
     public static <T extends AbstractNumber<T>> MutableMatrix<T> createRandomColumnMatrix(
         AbstractNumberSupport<T> support,
         int length, Random random
     ) {
-        return createRandomMatrixInternal(support, length, random, new MatrixDimension(length, 1));
+        return createRandomMatrix(support, length, 1, random);
     }
 
-    private static <T extends AbstractNumber<T>> MutableMatrix<T> createRandomMatrixInternal(
+    public static <T extends AbstractNumber<T>> MutableMatrix<T> createRandomMatrix(
         AbstractNumberSupport<T> support,
-        int length,
-        Random random,
-        MatrixDimension dimen
+        int rowCount, int columnCount,
+        Random random
     ) {
-        Preconditions.ensureValidLength(length);
+        Preconditions.ensureValidLength(rowCount);
+        Preconditions.ensureValidLength(columnCount);
 
-        T[] data = support.newArray(length);
+        T[] data = support.newArray(rowCount * columnCount);
 
         for (int i = 0; i < data.length; i++) {
             data[i] = support.randomNumber(random);
         }
 
-        return new MutableMatrix<>(support, data, dimen);
+        return new MutableMatrix<>(support, data, new MatrixDimension(rowCount, columnCount));
     }
 
     protected int linearIndex(int row, int column) {
