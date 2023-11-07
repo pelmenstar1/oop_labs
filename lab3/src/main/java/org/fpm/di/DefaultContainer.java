@@ -3,6 +3,7 @@ package org.fpm.di;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -45,13 +46,13 @@ public class DefaultContainer implements Container {
 
         for (Constructor<?> constructor : constructors) {
             if (constructor.getParameterCount() == 0) {
-                return createObjectWithConstructor(constructor);
+                return createObjectAndInjectFields(constructor);
             }
 
             if (constructor.isAnnotationPresent(Inject.class)) {
                 Object[] params = getComponents(constructor.getParameterTypes());
 
-                return createObjectWithConstructor(constructor, params);
+                return createObjectAndInjectFields(constructor, params);
             }
         }
 
@@ -69,15 +70,47 @@ public class DefaultContainer implements Container {
     }
 
     @SuppressWarnings("unchecked")
-    private static<T> T createObjectWithConstructor(Constructor<?> constructor, Object... params) {
+    private <T> T createObjectAndInjectFields(Constructor<?> constructor, Object... params) {
         try {
-            return (T)constructor.newInstance(params);
+            T result = (T)constructor.newInstance(params);
+            injectFields(result);
+
+            return result;
         } catch (InstantiationException e) {
             throw new RuntimeException("The class is abstract", e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Constructor is not public", e);
         } catch (InvocationTargetException e) {
             throw new RuntimeException("Constructor threw exception", e);
+        }
+    }
+
+    private void injectFields(Object obj) {
+        Class<?> c = obj.getClass();
+        Field[] instanceFields = c.getFields();
+
+        for (Field field : instanceFields) {
+            int mods = field.getModifiers();
+            if (Modifier.isStatic(mods)) {
+                continue;
+            }
+
+            if (field.isAnnotationPresent(Inject.class)) {
+                if (Modifier.isFinal(mods)) {
+                    throw new RuntimeException("Field annotated with Inject is final");
+                }
+
+                Class<?> fieldType = field.getType();
+                Object fieldValue = getComponent(fieldType);
+
+                if (field.trySetAccessible()) {
+                    try {
+                        field.set(obj, fieldValue);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException("Cannot set a field");
+                    }
+                }
+            }
         }
     }
 
