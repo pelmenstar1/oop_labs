@@ -39,6 +39,15 @@ public class DefaultContainerTests {
         }
     }
 
+    public static class InjectFinalFieldClass {
+        @Inject
+        public final Class1 class1;
+
+        public InjectFinalFieldClass() {
+            class1 = new Class1();
+        }
+    }
+
     public Container createContainer(Configuration conf) {
         return new DefaultEnvironment().configure(conf);
     }
@@ -100,5 +109,69 @@ public class DefaultContainerTests {
         InjectFieldClass result = container.getComponent(InjectFieldClass.class);
         assertEquals(Class3.class, result.class1.getClass());
         assertNotNull(result.class4);
+    }
+
+    @Test
+    public void injectFinalFieldTest() {
+        var container = createContainer(binder -> {
+            binder.bind(Class1.class);
+            binder.bind(InjectFinalFieldClass.class);
+        });
+
+        assertThrows(RuntimeException.class, () -> container.getComponent(InjectFinalFieldClass.class));
+    }
+
+    public void cycleDependencyTestHelper(Class<?>[] classes, Configuration config) {
+        var container = createContainer(config);
+
+        for (Class<?> c : classes) {
+            assertThrows(
+                "Cycle dependency detected",
+                RuntimeException.class,
+                () -> container.getComponent(c)
+            );
+        }
+    }
+
+    public void cycleDependencyTestHelper(Class<?>... classes) {
+        cycleDependencyTestHelper(classes, binder -> {
+            for (Class<?> c : classes) {
+                binder.bind(c);
+            }
+        });
+    }
+
+    @Test
+    public void cycleDependencyTest() {
+        cycleDependencyTestHelper(
+            CycleDependencies.ConstructorSimple.A.class,
+            CycleDependencies.ConstructorSimple.B.class
+        );
+
+        cycleDependencyTestHelper(
+            CycleDependencies.ConstructorTwoLevel.A.class,
+            CycleDependencies.ConstructorTwoLevel.B.class,
+            CycleDependencies.ConstructorTwoLevel.C.class
+        );
+
+        cycleDependencyTestHelper(
+            new Class[]{
+                CycleDependencies.ConstructorTwoLevelInheritance.A1.class,
+                CycleDependencies.ConstructorTwoLevelInheritance.A2.class,
+                CycleDependencies.ConstructorTwoLevelInheritance.B.class,
+                CycleDependencies.ConstructorTwoLevelInheritance.C.class,
+            },
+            binder -> {
+                binder.bind(CycleDependencies.ConstructorTwoLevelInheritance.A1.class, CycleDependencies.ConstructorTwoLevelInheritance.A2.class);
+                binder.bind(CycleDependencies.ConstructorTwoLevelInheritance.B.class);
+                binder.bind(CycleDependencies.ConstructorTwoLevelInheritance.C.class);
+            }
+        );
+
+        cycleDependencyTestHelper(
+            CycleDependencies.InjectFields.A.class,
+            CycleDependencies.InjectFields.B.class,
+            CycleDependencies.InjectFields.C.class
+        );
     }
 }
